@@ -1,0 +1,56 @@
+.topHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #fafafa;
+  padding-top: env(safe-area-inset-top); /* Safe area pour iOS */
+  padding-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  cursor: pointer;
+  padding-top: 1%;
+}
+
+.backButton {
+  border: 0;
+  color: rgb(62, 62, 62);
+  font-size: 180%;
+  background-color: #fafafa;
+  border-radius: 100%;
+  padding: 10px;
+  padding-top: 1%;
+  margin-left: 5%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #e8e8e8;
+  padding: 10px;
+}
+
+.dropdown {
+  margin-right: 7%;
+  padding-top: 1%;
+  cursor: pointer;
+}
+
+.spacer {
+  width: 28.8px; /* Même largeur que le bouton retour pour maintenir l'alignement */
+  margin-left: 5%;
+}

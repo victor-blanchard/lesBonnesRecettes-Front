@@ -17,6 +17,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
+  padding-top: 3rem;
 }
 
 .backButton {
@@ -216,6 +217,7 @@
   width: 100%;
   margin-top: 2rem;
   transition: all 0.3s ease;
+  margin-bottom: 2rem;
 }
 
 .logoutButton:hover {

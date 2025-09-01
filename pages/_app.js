@@ -5,7 +5,7 @@ function App({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <title>Bonnes Recettes</title>
+        <title>Recette®</title>
       </Head>
       <Component {...pageProps} />
     </>

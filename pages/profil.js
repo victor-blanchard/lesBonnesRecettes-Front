@@ -13,6 +13,7 @@ import {
   LogoutOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import Header from "../components/Header";
 
 const { TextArea } = Input;
 
@@ -123,14 +124,8 @@ function Profil() {
     <div>
       <main className={styles.main}>
         <div className={styles.header}>
-          {/* Header avec bouton retour */}
+          <Header showBackButton={true} />
           <div className={styles.topHeader}>
-            <Button
-              type="text"
-              icon={<ArrowLeftOutlined />}
-              className={styles.backButton}
-              onClick={handleBack}
-            />
             <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Mon Profil</h1>
             <div style={{ width: 48 }}></div> {/* Spacer pour centrer le titre */}
           </div>
@@ -200,18 +195,18 @@ function Profil() {
           </h3>
 
           <div className={styles.settingsSection}>
-            <div className={styles.settingItem}>
+            {/* <div className={styles.settingItem}>
               <span className={styles.settingLabel}>Notifications push</span>
               <Switch defaultChecked />
-            </div>
-            <div className={styles.settingItem}>
+            </div> */}
+            {/* <div className={styles.settingItem}>
               <span className={styles.settingLabel}>Notifications email</span>
               <Switch defaultChecked />
-            </div>
-            <div className={styles.settingItem}>
+            </div> */}
+            {/* <div className={styles.settingItem}>
               <span className={styles.settingLabel}>Mode sombre</span>
               <Switch />
-            </div>
+            </div> */}
             <div className={styles.settingItem}>
               <span className={styles.settingLabel}>Langue</span>
               <span className={styles.settingValue}>Français</span>

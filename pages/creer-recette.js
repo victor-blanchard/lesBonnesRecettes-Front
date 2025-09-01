@@ -9,6 +9,7 @@ import {
   DeleteOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
+import Header from "../components/Header";
 
 function CreerRecette() {
   const router = useRouter();
@@ -75,14 +76,10 @@ function CreerRecette() {
   return (
     <div className={styles.main}>
       <div className={styles.pageContainer}>
+        <Header showBackButton={true} />
+
         <div className={styles.topHeader}>
-          <Button
-            type="text"
-            icon={<ArrowLeftOutlined />}
-            className={styles.backButton}
-            onClick={handleBack}
-          />
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Nouvelle recette</h1>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Nouvelle Recette</h1>
           <div style={{ width: 48 }}></div>
         </div>
         <div className={styles.formContainer}>
@@ -130,9 +127,15 @@ function CreerRecette() {
             <div className={styles.sectionTitle}>Temps de préparation</div>
             <div className={styles.timeContainer}>
               <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
-                <Radio.Button value="fast">Rapide</Radio.Button>
-                <Radio.Button value="medium">Moyen</Radio.Button>
-                <Radio.Button value="long">Long</Radio.Button>
+                <Radio.Button className={styles.timeRadioButton} value="fast">
+                  Rapide
+                </Radio.Button>
+                <Radio.Button className={styles.timeRadioButton} value="medium">
+                  Moyen
+                </Radio.Button>
+                <Radio.Button className={styles.timeRadioButton} value="long">
+                  Long
+                </Radio.Button>
               </Radio.Group>
             </div>
             <div className={styles.sectionTitle}>
@@ -164,7 +167,7 @@ function CreerRecette() {
                     type="number"
                     onChange={(e) => handleIngredientChange(idx, "quantity", e.target.value)}
                     rules={[{ type: "number", message: "Veuillez entrer une quantité valide" }]}
-                    inputmode="numeric"
+                    inputMode="numeric"
                     min={0}
                   />
 

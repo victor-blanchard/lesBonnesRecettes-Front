@@ -2,38 +2,71 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
+  min-width: 100vw;
   background-color: #fafafa;
 }
 
-.header {
-  margin-top: 5%;
-  margin-left: 5%;
-  margin-right: 5%;
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
   width: 90%;
 }
 
 .topHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #fafafa;
+  padding-top: env(safe-area-inset-top); /* Safe area pour iOS */
+  padding-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+.logo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  cursor: pointer;
+  padding-top: 1%;
 }
 
 .backButton {
   border: 0;
   color: rgb(62, 62, 62);
   font-size: 180%;
-  background-color: #f5f5f5;
+  background-color: #fafafa;
   border-radius: 100%;
   padding: 10px;
+  padding-top: 1%;
+  margin-left: 5%;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
+.dropdown {
+  margin-right: 7%;
+  padding-top: 1%;
+}
+
 .backButton:hover {
   background-color: #e8e8e8;
-  transform: scale(1.05);
+  padding: 10px;
 }
 
 .recipeContainer {
@@ -85,6 +118,7 @@
 
 .recipeContent {
   padding: 2rem;
+  /* background-color: #ff0000; */
 }
 
 .recipeDescription {
@@ -154,7 +188,7 @@
   padding: 0.75rem;
   background-color: #f8f9fa;
   border-radius: 8px;
-  border-left: 4px solid #52c41a;
+  border-left: 4px solid #3c096c;
 }
 
 .ingredientQuantity {
@@ -178,7 +212,7 @@
 
 .instructionStep {
   display: flex;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   padding: 1rem;
   background-color: #f8f9fa;
   border-radius: 10px;
@@ -192,7 +226,7 @@
   left: -15px;
   top: 50%;
   transform: translateY(-50%);
-  background-color: #1890ff;
+  background-color: #ff7900;
   color: white;
   width: 30px;
   height: 30px;
@@ -208,6 +242,10 @@
   margin-left: 1rem;
   line-height: 1.6;
   color: #333;
+  text-align: justify;
+  text-align-last: left; /* Dernière ligne à gauche */
+  hyphens: auto; /* Césure automatique */
+  word-spacing: -0.1em;
 }
 
 .actionsSection {
@@ -266,78 +304,6 @@
   background-color: #52c41a !important;
   border-color: #52c41a !important;
   color: white !important;
-}
-
-.nutritionSection {
-  background-color: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 15px;
-  margin-bottom: 2rem;
-}
-
-.nutritionGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-}
-
-.nutritionItem {
-  text-align: center;
-  padding: 1rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.nutritionValue {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.25rem;
-}
-
-.nutritionLabel {
-  font-size: 0.8rem;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.tipsSection {
-  background-color: #fff7e6;
-  border: 1px solid #ffd591;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.tipsTitle {
-  color: #d46b08;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.tipsList {
-  list-style: none;
-  padding: 0;
-}
-
-.tipsList li {
-  margin-bottom: 0.5rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-  color: #666;
-}
-
-.tipsList li::before {
-  content: "💡";
-  position: absolute;
-  left: 0;
-  top: 0;
 }
 
 .authorSection {

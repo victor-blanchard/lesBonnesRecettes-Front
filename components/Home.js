@@ -8,6 +8,7 @@ import {
   ClockCircleOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
+import Header from "./Header";
 // const { Search } = Input;
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
@@ -46,34 +47,23 @@ const { Meta } = Card;
 function Home() {
   const router = useRouter();
 
+  const handleBackToHome = () => {
+    router.push("/");
+  };
+
   return (
     <div>
       <main className={styles.main}>
-        <div className={styles.header}>
-          <div className={styles.topHeader}>
-            <img className={styles.avatar} alt="avatar" src="alf.jpg" />
+        {/* Header réutilisable */}
+        <Header showBackButton={false} />
 
-            <Dropdown
-              menu={{
-                items,
-              }}
-              trigger={["click"]}
-            >
-              <a onClick={(e) => e.preventDefault()}>
-                <Space>
-                  <MenuOutlined className={styles.topIcon} />
-                </Space>
-              </a>
-            </Dropdown>
-          </div>
-
-          <h1 className={styles.title}>On cuisine quoi aujourd'hui ?</h1>
-
+        {/* Contenu principal avec padding pour le Header flottant */}
+        <div className={styles.mainContent}>
           <div className={styles.searchTab}>
             <SearchOutlined className={styles.searchIcon} />
             <Input
               className={styles.search}
-              placeholder="Recherche une recette..."
+              placeholder="Rechercher une recette..."
               allowClear
               variant="borderless"
               onSearch={onSearch}
@@ -84,7 +74,7 @@ function Home() {
 
           <div className={styles.filtersTab}>
             <Button className={styles.filterButton} shape="round">
-              Tout
+              Entrées
             </Button>
             <Button className={styles.filterButton} shape="round">
               Plats
@@ -98,8 +88,7 @@ function Home() {
           </div>
 
           <p className={styles.recipesNumber}>15 recettes trouvées</p>
-        </div>
-        <div className={styles.container}>
+
           <div className={styles.recipesGrid}>
             <div className={styles.card} onClick={() => router.push("/recette/1")}>
               <img className={styles.cardImage} alt="recipe" src="carrotCake.jpeg" />

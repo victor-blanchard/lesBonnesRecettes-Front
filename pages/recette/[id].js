@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/Recette.module.css";
-import { Button, Avatar, Divider, message, Skeleton, Modal } from "antd";
+import { Button, Avatar, Divider, message, Skeleton, Modal, Dropdown, Space } from "antd";
 import {
   ArrowLeftOutlined,
   HeartOutlined,
@@ -13,7 +13,9 @@ import {
   FireOutlined,
   StarOutlined,
   BulbOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
+import Header from "../../components/Header";
 
 function Recette() {
   const router = useRouter();
@@ -171,19 +173,6 @@ function Recette() {
         "Assembler les pièces pour former un vélo.",
         "Décorer avec du glaçage coloré.",
       ],
-      nutrition: {
-        calories: 350,
-        protein: "6g",
-        carbs: "50g",
-        fat: "20g",
-        fiber: "3g",
-        sugar: "30g",
-      },
-      tips: [
-        "Utilisez un moule spécial vélo ou créez votre propre forme.",
-        "Laissez bien refroidir avant l'assemblage.",
-        "Utilisez du glaçage royal pour une décoration stable.",
-      ],
     },
   };
 
@@ -197,10 +186,6 @@ function Recette() {
       router.push("/");
     }
   }, [id, router]);
-
-  const handleBack = () => {
-    router.back();
-  };
 
   const handleFavorite = () => {
     setIsFavorite(!isFavorite);
@@ -221,14 +206,10 @@ function Recette() {
     }
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   if (isLoading) {
     return (
       <div className={styles.main}>
-        <div className={styles.header}>
+        <div className={styles.pageContainer}>
           <Skeleton active />
         </div>
       </div>
@@ -241,19 +222,10 @@ function Recette() {
 
   return (
     <div className={styles.main}>
-      <div className={styles.header}>
-        {/* Header avec bouton retour */}
-        <div className={styles.topHeader}>
-          <Button
-            type="text"
-            icon={<ArrowLeftOutlined />}
-            className={styles.backButton}
-            onClick={handleBack}
-          />
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Recette</h1>
-          <div style={{ width: 48 }}></div>
-        </div>
+      {/* Header avec bouton retour */}
+      <Header showBackButton={true} />
 
+      <div className={styles.pageContainer}>
         {/* Container principal de la recette */}
         <div className={styles.recipeContainer}>
           {/* Hero section avec image */}
@@ -264,12 +236,6 @@ function Recette() {
               <div className={styles.recipeMeta}>
                 <span>
                   <ClockCircleOutlined /> {recipe.time}
-                </span>
-                <span>
-                  <StarOutlined /> {recipe.difficulty}
-                </span>
-                <span>
-                  <UserOutlined /> {recipe.servings} personnes
                 </span>
               </div>
             </div>
@@ -301,7 +267,7 @@ function Recette() {
             </div>
 
             {/* Actions */}
-            <div className={styles.actionsSection}>
+            {/* <div className={styles.actionsSection}>
               <Button
                 icon={isFavorite ? <HeartFilled /> : <HeartOutlined />}
                 className={`${styles.actionButton} ${styles.favoriteButton} ${
@@ -318,14 +284,7 @@ function Recette() {
               >
                 Partager
               </Button>
-              <Button
-                icon={<PrinterOutlined />}
-                className={`${styles.actionButton} ${styles.printButton}`}
-                onClick={handlePrint}
-              >
-                Imprimer
-              </Button>
-            </div>
+            </div> */}
 
             {/* Ingrédients */}
             <div className={styles.ingredientsSection}>
@@ -356,53 +315,6 @@ function Recette() {
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Informations nutritionnelles */}
-            <div className={styles.nutritionSection}>
-              <h3 className={styles.sectionTitle}>
-                <StarOutlined />
-                Informations nutritionnelles (par portion)
-              </h3>
-              <div className={styles.nutritionGrid}>
-                <div className={styles.nutritionItem}>
-                  <div className={styles.nutritionValue}>{recipe.nutrition.calories}</div>
-                  <div className={styles.nutritionLabel}>Calories</div>
-                </div>
-                <div className={styles.nutritionItem}>
-                  <div className={styles.nutritionValue}>{recipe.nutrition.protein}</div>
-                  <div className={styles.nutritionLabel}>Protéines</div>
-                </div>
-                <div className={styles.nutritionItem}>
-                  <div className={styles.nutritionValue}>{recipe.nutrition.carbs}</div>
-                  <div className={styles.nutritionLabel}>Glucides</div>
-                </div>
-                <div className={styles.nutritionItem}>
-                  <div className={styles.nutritionValue}>{recipe.nutrition.fat}</div>
-                  <div className={styles.nutritionLabel}>Lipides</div>
-                </div>
-                <div className={styles.nutritionItem}>
-                  <div className={styles.nutritionValue}>{recipe.nutrition.fiber}</div>
-                  <div className={styles.nutritionLabel}>Fibres</div>
-                </div>
-                <div className={styles.nutritionItem}>
-                  <div className={styles.nutritionValue}>{recipe.nutrition.sugar}</div>
-                  <div className={styles.nutritionLabel}>Sucres</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Conseils et astuces */}
-            <div className={styles.tipsSection}>
-              <h3 className={styles.tipsTitle}>
-                <BulbOutlined />
-                Conseils et astuces
-              </h3>
-              <ul className={styles.tipsList}>
-                {recipe.tips.map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul>
             </div>
 
             {/* Auteur */}

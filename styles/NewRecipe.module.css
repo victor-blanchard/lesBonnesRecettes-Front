@@ -22,6 +22,7 @@
   justify-content: space-between;
   margin-bottom: 2rem;
   width: 100%;
+  padding-top: 3rem;
   /* background-color: #b22929; */
 }
 
@@ -105,6 +106,11 @@
 
 .timeRadio {
   width: 100%;
+  color: #ff7900;
+}
+
+.timeRadioButton {
+  font-weight: 500;
 }
 
 .ingredientSelect {
@@ -115,7 +121,7 @@
 }
 .addButton {
   margin-top: 0.5rem;
-  background-color: #1890ff;
+  background-color: #ff7900;
   color: white;
   border-radius: 8px;
   font-weight: 500;
@@ -123,7 +129,7 @@
 }
 
 .addButton:hover {
-  background-color: #40a9ff !important;
+  background-color: #ff7900 !important;
   color: white !important;
 }
 
@@ -152,7 +158,7 @@
 }
 
 .saveButton {
-  background-color: #52c41a;
+  background-color: #28c00e;
   color: white;
   border-radius: 8px;
   font-weight: 500;
