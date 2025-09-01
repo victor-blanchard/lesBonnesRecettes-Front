@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/NewRecipe.module.css";
-import { Button, Input, Form, Upload, message, Modal } from "antd";
+import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton } from "antd";
 import {
   ArrowLeftOutlined,
   HomeOutlined,
@@ -68,14 +68,17 @@ function CreerRecette() {
   };
 
   const handleBack = () => router.back();
-
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+  };
+  const { Option } = Select;
   return (
     <div className={styles.main}>
-      <div className={styles.header}>
+      <div className={styles.pageContainer}>
         <div className={styles.topHeader}>
           <Button
             type="text"
-            icon={<HomeOutlined />}
+            icon={<ArrowLeftOutlined />}
             className={styles.backButton}
             onClick={handleBack}
           />
@@ -89,14 +92,18 @@ function CreerRecette() {
               name="title"
               rules={[{ required: true, message: "Le titre est obligatoire" }]}
             >
-              <Input placeholder="Ex : Gâteau au chocolat" />
+              <Input placeholder="Ex : Gâteau au chocolat" className={styles.titleInput} />
             </Form.Item>
             <Form.Item
               label="Description"
               name="description"
               rules={[{ required: true, message: "La description est obligatoire" }]}
             >
-              <Input.TextArea rows={3} placeholder="Décrivez brièvement la recette..." />
+              <Input.TextArea
+                rows={3}
+                placeholder="Décrivez brièvement la recette..."
+                className={styles.descriptionInput}
+              />
             </Form.Item>
             <div className={styles.upload}>
               <Upload
@@ -120,6 +127,14 @@ function CreerRecette() {
                 />
               )}
             </div>
+            <div className={styles.sectionTitle}>Temps de préparation</div>
+            <div className={styles.timeContainer}>
+              <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
+                <Radio.Button value="fast">Rapide</Radio.Button>
+                <Radio.Button value="medium">Moyen</Radio.Button>
+                <Radio.Button value="long">Long</Radio.Button>
+              </Radio.Group>
+            </div>
             <div className={styles.sectionTitle}>
               Ingrédients
               <Button
@@ -137,15 +152,35 @@ function CreerRecette() {
                 <div key={idx} className={styles.ingredientItem}>
                   <Input
                     className={styles.ingredientInput}
-                    placeholder="Quantité (ex : 200g)"
-                    value={ingredient.quantity}
-                    onChange={(e) => handleIngredientChange(idx, "quantity", e.target.value)}
+                    placeholder="Nom de l'ingrédient"
+                    value={ingredient.name}
+                    type="text"
+                    onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
                   />
                   <Input
                     className={styles.ingredientInput}
-                    placeholder="Nom de l'ingrédient"
-                    value={ingredient.name}
-                    onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
+                    placeholder="Quantité (ex : 200g)"
+                    value={ingredient.quantity}
+                    type="number"
+                    onChange={(e) => handleIngredientChange(idx, "quantity", e.target.value)}
+                    rules={[{ type: "number", message: "Veuillez entrer une quantité valide" }]}
+                    inputmode="numeric"
+                    min={0}
+                  />
+
+                  <Select
+                    className={styles.ingredientSelect}
+                    defaultValue="gr"
+                    style={{ width: 100 }}
+                    onChange={handleChange}
+                    options={[
+                      { value: "gr", label: "gr" },
+                      { value: "cl", label: "cl" },
+                      { value: "ml", label: "ml" },
+                      { value: "càs", label: "càs" },
+                      { value: "càc", label: "càc" },
+                      { value: "unité", label: "unité" },
+                    ]}
                   />
                   <button
                     className={styles.removeButton}
