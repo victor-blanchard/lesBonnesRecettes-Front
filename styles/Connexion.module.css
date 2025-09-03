@@ -1,0 +1,235 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #db7c11 0%, #a4b1c8 100%);
+  padding-top: calc(env(safe-area-inset-top) + 10%);
+}
+
+.container {
+  width: 90%;
+  max-width: 450px;
+  padding: 1rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.formCard {
+  background: rgb(255, 255, 255);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.form {
+  margin-bottom: 1.5rem;
+}
+
+.input {
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+  padding: 12px 16px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.input:focus,
+.input:hover {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input .ant-input-prefix {
+  color: #999;
+  margin-right: 8px;
+}
+
+.rememberMe {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.forgotPassword {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.forgotPassword:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.divider {
+  margin: 2rem 0;
+  border-color: #f0f0f0;
+}
+
+.dividerText {
+  color: #999;
+  font-size: 0.9rem;
+  background: white;
+  padding: 0 1rem;
+}
+
+.socialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.socialButton {
+  height: 48px;
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+  background: white;
+  color: #333;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.socialButton:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+  transform: translateY(-1px);
+}
+
+.switchMode {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.switchMode p {
+  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.switchButton {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.switchButton:hover {
+  color: #764ba2;
+}
+
+/* Support pour les navigateurs qui ne supportent pas env() */
+@supports not (padding-top: env(safe-area-inset-top)) {
+  .main {
+    padding-top: 100px;
+  }
+}
+
+/* Styles pour mobile */
+@media (max-width: 768px) {
+  .main {
+    padding-top: calc(env(safe-area-inset-top) + 70px);
+  }
+
+  .container {
+    padding: 1rem;
+    min-height: calc(100vh - 70px);
+  }
+
+  .formCard {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .input {
+    font-size: 16px; /* Évite le zoom sur iOS */
+  }
+
+  .socialButtons {
+    gap: 0.75rem;
+  }
+
+  .socialButton {
+    height: 44px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Styles pour les très petits écrans */
+@media (max-width: 480px) {
+  .formCard {
+    padding: 1.5rem 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .container {
+    padding: 0.5rem;
+  }
+}

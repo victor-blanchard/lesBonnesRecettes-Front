@@ -2,43 +2,58 @@ import { useRouter } from "next/router";
 import { Button, Dropdown, Space } from "antd";
 import { ArrowLeftOutlined, MenuOutlined } from "@ant-design/icons";
 import styles from "../styles/Header.module.css";
-
-const items = [
-  {
-    label: (
-      <a href="/creer-recette" rel="noopener noreferrer">
-        Ajouter une recette
-      </a>
-    ),
-    key: "0",
-  },
-  {
-    label: (
-      <a href="/profil" rel="noopener noreferrer">
-        Mon profil
-      </a>
-    ),
-    key: "1",
-  },
-  {
-    type: "divider",
-  },
-  {
-    label: (
-      <a href="https://www.aliyun.com" target="_blank" rel="noopener noreferrer">
-        Se déconnecter
-      </a>
-    ),
-    key: "3",
-  },
-];
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { userIsConnected } from "../reducers/users";
 
 function Header({ showBackButton = false, onBackClick }) {
   const router = useRouter();
-
+  const displayMenu = useSelector((state) => state.users.value.userIsConnected);
+  const dispatch = useDispatch();
   const handleBackToHome = () => {
     router.push("/");
   };
+
+  const handleLogout = async () => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/signOut`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (response.ok) {
+      dispatch(userIsConnected(false));
+      // router.push("/connexion");
+    }
+  };
+
+  const items = [
+    {
+      label: (
+        <a href="/creer-recette" rel="noopener noreferrer">
+          Ajouter une recette
+        </a>
+      ),
+      key: "0",
+    },
+    {
+      label: (
+        <a href="/profil" rel="noopener noreferrer">
+          Mon profil
+        </a>
+      ),
+      key: "1",
+    },
+    {
+      type: "divider",
+    },
+    {
+      label: (
+        <a onClick={handleLogout} rel="noopener noreferrer">
+          Se déconnecter
+        </a>
+      ),
+      key: "3",
+    },
+  ];
 
   const handleBack = () => {
     if (onBackClick) {
@@ -65,20 +80,23 @@ function Header({ showBackButton = false, onBackClick }) {
         <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Recette</h1>
         <h1 style={{ margin: 0, fontSize: "0.7rem", fontWeight: 600 }}>®</h1>
       </div>
-
-      <Dropdown
-        className={styles.dropdown}
-        menu={{
-          items,
-        }}
-        trigger={["click"]}
-      >
-        <a onClick={(e) => e.preventDefault()}>
-          <Space>
-            <MenuOutlined className={styles.topIcon} />
-          </Space>
-        </a>
-      </Dropdown>
+      {displayMenu ? (
+        <Dropdown
+          className={styles.dropdown}
+          menu={{
+            items,
+          }}
+          trigger={["click"]}
+        >
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+              <MenuOutlined className={styles.topIcon} />
+            </Space>
+          </a>
+        </Dropdown>
+      ) : (
+        <div className={styles.spacer}></div>
+      )}
     </div>
   );
 }

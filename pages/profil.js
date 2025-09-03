@@ -14,6 +14,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import Header from "../components/Header";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const { TextArea } = Input;
 
@@ -121,154 +122,156 @@ function Profil() {
   );
 
   return (
-    <div>
-      <main className={styles.main}>
-        <div className={styles.header}>
-          <Header showBackButton={true} />
-          <div className={styles.topHeader}>
-            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Mon Profil</h1>
-            <div style={{ width: 48 }}></div> {/* Spacer pour centrer le titre */}
-          </div>
-
-          {/* Section profil */}
-          <div className={styles.profileSection}>
-            <Avatar
-              size={120}
-              src={profileData.avatar}
-              icon={<UserOutlined />}
-              className={styles.profileAvatar}
-            />
-            <h2 className={styles.profileName}>{profileData.name}</h2>
-            <p className={styles.profileEmail}>{profileData.email}</p>
-            <p style={{ textAlign: "center", color: "#666", marginBottom: "1rem" }}>
-              {profileData.bio}
-            </p>
-            <Button
-              type="default"
-              icon={<EditOutlined />}
-              className={styles.editButton}
-              onClick={handleEditProfile}
-            >
-              Modifier le profil
-            </Button>
-          </div>
-
-          {/* Section statistiques */}
-          <div className={styles.statsSection}>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{profileData.recipesCount}</div>
-              <div className={styles.statLabel}>Recettes créées</div>
+    <ProtectedRoute>
+      <div>
+        <main className={styles.main}>
+          <div className={styles.header}>
+            <Header showBackButton={true} />
+            <div className={styles.topHeader}>
+              <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Mon Profil</h1>
+              <div style={{ width: 48 }}></div> {/* Spacer pour centrer le titre */}
             </div>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{profileData.favoritesCount}</div>
-              <div className={styles.statLabel}>Favoris</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{profileData.totalTime}</div>
-              <div className={styles.statLabel}>Temps total</div>
-            </div>
-          </div>
 
-          {/* Section mes recettes */}
-          <h3 className={styles.sectionTitle}>
-            <BookOutlined style={{ marginRight: "0.5rem" }} />
-            Mes Recettes
-          </h3>
-
-          {userRecipes.length > 0 ? (
-            <div className={styles.recipesGrid}>{userRecipes.map(renderRecipeCard)}</div>
-          ) : (
-            <div className={styles.emptyState}>
-              <PlusOutlined className={styles.emptyStateIcon} />
-              <h3>Aucune recette créée</h3>
-              <p>Commencez par créer votre première recette !</p>
-              <Button type="primary" size="large" style={{ marginTop: "1rem" }}>
-                Créer une recette
+            {/* Section profil */}
+            <div className={styles.profileSection}>
+              <Avatar
+                size={120}
+                src={profileData.avatar}
+                icon={<UserOutlined />}
+                className={styles.profileAvatar}
+              />
+              <h2 className={styles.profileName}>{profileData.name}</h2>
+              <p className={styles.profileEmail}>{profileData.email}</p>
+              <p style={{ textAlign: "center", color: "#666", marginBottom: "1rem" }}>
+                {profileData.bio}
+              </p>
+              <Button
+                type="default"
+                icon={<EditOutlined />}
+                className={styles.editButton}
+                onClick={handleEditProfile}
+              >
+                Modifier le profil
               </Button>
             </div>
-          )}
 
-          {/* Section paramètres */}
-          <h3 className={styles.sectionTitle}>
-            <SettingOutlined style={{ marginRight: "0.5rem" }} />
-            Paramètres
-          </h3>
+            {/* Section statistiques */}
+            <div className={styles.statsSection}>
+              <div className={styles.statItem}>
+                <div className={styles.statNumber}>{profileData.recipesCount}</div>
+                <div className={styles.statLabel}>Recettes créées</div>
+              </div>
+              <div className={styles.statItem}>
+                <div className={styles.statNumber}>{profileData.favoritesCount}</div>
+                <div className={styles.statLabel}>Favoris</div>
+              </div>
+              <div className={styles.statItem}>
+                <div className={styles.statNumber}>{profileData.totalTime}</div>
+                <div className={styles.statLabel}>Temps total</div>
+              </div>
+            </div>
 
-          <div className={styles.settingsSection}>
-            {/* <div className={styles.settingItem}>
+            {/* Section mes recettes */}
+            <h3 className={styles.sectionTitle}>
+              <BookOutlined style={{ marginRight: "0.5rem" }} />
+              Mes Recettes
+            </h3>
+
+            {userRecipes.length > 0 ? (
+              <div className={styles.recipesGrid}>{userRecipes.map(renderRecipeCard)}</div>
+            ) : (
+              <div className={styles.emptyState}>
+                <PlusOutlined className={styles.emptyStateIcon} />
+                <h3>Aucune recette créée</h3>
+                <p>Commencez par créer votre première recette !</p>
+                <Button type="primary" size="large" style={{ marginTop: "1rem" }}>
+                  Créer une recette
+                </Button>
+              </div>
+            )}
+
+            {/* Section paramètres */}
+            <h3 className={styles.sectionTitle}>
+              <SettingOutlined style={{ marginRight: "0.5rem" }} />
+              Paramètres
+            </h3>
+
+            <div className={styles.settingsSection}>
+              {/* <div className={styles.settingItem}>
               <span className={styles.settingLabel}>Notifications push</span>
               <Switch defaultChecked />
             </div> */}
-            {/* <div className={styles.settingItem}>
+              {/* <div className={styles.settingItem}>
               <span className={styles.settingLabel}>Notifications email</span>
               <Switch defaultChecked />
             </div> */}
-            {/* <div className={styles.settingItem}>
+              {/* <div className={styles.settingItem}>
               <span className={styles.settingLabel}>Mode sombre</span>
               <Switch />
             </div> */}
-            <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Langue</span>
-              <span className={styles.settingValue}>Français</span>
+              <div className={styles.settingItem}>
+                <span className={styles.settingLabel}>Langue</span>
+                <span className={styles.settingValue}>Français</span>
+              </div>
             </div>
+
+            {/* Bouton de déconnexion */}
+            <Button
+              type="primary"
+              danger
+              icon={<LogoutOutlined />}
+              className={styles.logoutButton}
+              onClick={handleLogout}
+            >
+              Se déconnecter
+            </Button>
           </div>
+        </main>
 
-          {/* Bouton de déconnexion */}
-          <Button
-            type="primary"
-            danger
-            icon={<LogoutOutlined />}
-            className={styles.logoutButton}
-            onClick={handleLogout}
-          >
-            Se déconnecter
-          </Button>
-        </div>
-      </main>
+        {/* Modal d'édition du profil */}
+        <Modal
+          title="Modifier le profil"
+          open={isEditModalVisible}
+          onCancel={() => setIsEditModalVisible(false)}
+          footer={null}
+          width={500}
+        >
+          <Form form={form} layout="vertical" onFinish={handleSaveProfile}>
+            <Form.Item
+              name="name"
+              label="Nom complet"
+              rules={[{ required: true, message: "Veuillez saisir votre nom" }]}
+            >
+              <Input placeholder="Votre nom complet" />
+            </Form.Item>
 
-      {/* Modal d'édition du profil */}
-      <Modal
-        title="Modifier le profil"
-        open={isEditModalVisible}
-        onCancel={() => setIsEditModalVisible(false)}
-        footer={null}
-        width={500}
-      >
-        <Form form={form} layout="vertical" onFinish={handleSaveProfile}>
-          <Form.Item
-            name="name"
-            label="Nom complet"
-            rules={[{ required: true, message: "Veuillez saisir votre nom" }]}
-          >
-            <Input placeholder="Votre nom complet" />
-          </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Veuillez saisir votre email" },
+                { type: "email", message: "Veuillez saisir un email valide" },
+              ]}
+            >
+              <Input placeholder="votre.email@example.com" />
+            </Form.Item>
 
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: "Veuillez saisir votre email" },
-              { type: "email", message: "Veuillez saisir un email valide" },
-            ]}
-          >
-            <Input placeholder="votre.email@example.com" />
-          </Form.Item>
+            <Form.Item name="bio" label="Bio">
+              <TextArea rows={4} placeholder="Parlez-nous un peu de vous..." />
+            </Form.Item>
 
-          <Form.Item name="bio" label="Bio">
-            <TextArea rows={4} placeholder="Parlez-nous un peu de vous..." />
-          </Form.Item>
-
-          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
-            <Button style={{ marginRight: 8 }} onClick={() => setIsEditModalVisible(false)}>
-              Annuler
-            </Button>
-            <Button type="primary" htmlType="submit" loading={isLoading}>
-              Sauvegarder
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+            <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+              <Button style={{ marginRight: 8 }} onClick={() => setIsEditModalVisible(false)}>
+                Annuler
+              </Button>
+              <Button type="primary" htmlType="submit" loading={isLoading}>
+                Sauvegarder
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+      </div>
+    </ProtectedRoute>
   );
 }
 

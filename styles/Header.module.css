@@ -5,7 +5,7 @@
   right: 0;
   z-index: 1000;
   background: #fafafa;
-  padding-top: env(safe-area-inset-top); /* Safe area pour iOS */
+  padding-top: env(safe-area-inset-top);
   padding-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
@@ -49,8 +49,7 @@
   padding-top: 1%;
   cursor: pointer;
 }
-
 .spacer {
-  width: 28.8px; /* Même largeur que le bouton retour pour maintenir l'alignement */
+  width: 28.8px; /* Même largeur que le bouton retour pour maintenir l'alignement sur les pages où il est absent */
   margin-left: 5%;
 }

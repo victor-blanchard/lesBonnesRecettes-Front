@@ -1,50 +1,23 @@
 import styles from "../styles/Home.module.css";
-import { Skeleton, Card, Button, Input, Divider, Avatar, Dropdown, Space } from "antd";
+import { Skeleton, Card, Button, Input, Divider, Avatar, Dropdown, Space, Spin, Flex } from "antd";
 import {
   PlusCircleOutlined,
   SearchOutlined,
   UserOutlined,
   MenuOutlined,
   ClockCircleOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import Header from "./Header";
 // const { Search } = Input;
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const items = [
-  {
-    label: (
-      <a href="/creer-recette" rel="noopener noreferrer">
-        Ajouter une recette
-      </a>
-    ),
-    key: "0",
-  },
-  {
-    label: (
-      <a href="/profil" rel="noopener noreferrer">
-        Mon profil
-      </a>
-    ),
-    key: "1",
-  },
-  {
-    type: "divider",
-  },
-  {
-    label: (
-      <a href="https://www.aliyun.com" target="_blank" rel="noopener noreferrer">
-        Se déconnecter
-      </a>
-    ),
-    key: "3",
-  },
-];
-
 const { Meta } = Card;
 
 function Home() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleBackToHome = () => {
@@ -53,8 +26,16 @@ function Home() {
 
   return (
     <div>
+      {isLoading && (
+        <Flex align="center" gap="middle">
+          <Spin
+            indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />}
+            spinning={isLoading}
+            className={styles.loading}
+          />
+        </Flex>
+      )}
       <main className={styles.main}>
-        {/* Header réutilisable */}
         <Header showBackButton={false} />
 
         {/* Contenu principal avec padding pour le Header flottant */}
