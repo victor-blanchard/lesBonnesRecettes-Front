@@ -49,6 +49,19 @@
   padding-top: 1%;
   cursor: pointer;
 }
+.logInButton {
+  display: flex;
+  background-color: #ffffff;
+  border-color: #d9d9d9;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-radius: 20px;
+  margin-right: 1rem;
+  height: auto;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(201, 14, 14, 0.1);
+}
 .spacer {
   width: 28.8px; /* Même largeur que le bouton retour pour maintenir l'alignement sur les pages où il est absent */
   margin-left: 5%;

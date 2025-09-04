@@ -4,7 +4,8 @@ import { ArrowLeftOutlined, MenuOutlined } from "@ant-design/icons";
 import styles from "../styles/Header.module.css";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userIsConnected } from "../reducers/users";
+import { userIsConnected, setUserId } from "../reducers/users";
+import { UserOutlined } from "@ant-design/icons";
 
 function Header({ showBackButton = false, onBackClick }) {
   const router = useRouter();
@@ -21,7 +22,7 @@ function Header({ showBackButton = false, onBackClick }) {
     });
     if (response.ok) {
       dispatch(userIsConnected(false));
-      // router.push("/connexion");
+      dispatch(setUserId(null));
     }
   };
 
@@ -83,6 +84,7 @@ function Header({ showBackButton = false, onBackClick }) {
       {displayMenu ? (
         <Dropdown
           className={styles.dropdown}
+          placement="bottomLeft"
           menu={{
             items,
           }}
@@ -95,7 +97,29 @@ function Header({ showBackButton = false, onBackClick }) {
           </a>
         </Dropdown>
       ) : (
-        <div className={styles.spacer}></div>
+        <Dropdown
+          className={styles.dropdown}
+          placement="bottomLeft"
+          menu={{
+            items: [
+              {
+                label: (
+                  <a href="/connexion" rel="noopener noreferrer">
+                    Se connecter
+                  </a>
+                ),
+                key: "0",
+              },
+            ],
+          }}
+          trigger={["click"]}
+        >
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+              <MenuOutlined className={styles.topIcon} />
+            </Space>
+          </a>
+        </Dropdown>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/NewRecipe.module.css";
-import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton } from "antd";
+import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
 import {
   ArrowLeftOutlined,
   HomeOutlined,
@@ -9,16 +9,41 @@ import {
   DeleteOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 import Header from "../components/Header";
-import ProtectedRoute from "../components/ProtectedRoute";
+import { authGuard } from "../hooks/authGuard";
+import { useSelector } from "react-redux";
 
 function CreerRecette() {
+  authGuard();
+  const userId = useSelector((state) => state.users.value.userId);
   const router = useRouter();
   const [form] = Form.useForm();
-  const [ingredients, setIngredients] = useState([{ name: "", quantity: "" }]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [duration, setDuration] = useState("");
+  const [ingredients, setIngredients] = useState([{ name: "", quantity: "", unit: "gr" }]);
   const [steps, setSteps] = useState([""]);
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  // Variable qui contient toutes les données du formulaire de la recette
+  const donneesRecette = {
+    author: userId,
+    name: name,
+    description: description,
+    category: category,
+    duration: duration,
+    ingredients: ingredients,
+    steps: steps,
+    imageUrl: imageUrl,
+  };
 
   // Gestion des ingrédients dynamiques
   const handleIngredientChange = (index, field, value) => {
@@ -26,7 +51,8 @@ function CreerRecette() {
     newIngredients[index][field] = value;
     setIngredients(newIngredients);
   };
-  const addIngredient = () => setIngredients([...ingredients, { name: "", quantity: "" }]);
+  const addIngredient = () =>
+    setIngredients([...ingredients, { name: "", quantity: "", unit: "gr" }]);
   const removeIngredient = (index) => {
     if (ingredients.length === 1) return;
     setIngredients(ingredients.filter((_, i) => i !== index));
@@ -44,6 +70,43 @@ function CreerRecette() {
     setSteps(steps.filter((_, i) => i !== index));
   };
 
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState([]);
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
+
+  // const [previewOpen, setPreviewOpen] = useState(false);
+  // const [previewImage, setPreviewImage] = useState("");
+
+  // const getBase64 = (file) =>
+  //   new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => resolve(reader.result);
+  //     reader.onerror = (error) => reject(error);
+  //   });
+
+  // const handlePreview = async (file) => {
+  //   if (!file.url && !file.preview) {
+  //     file.preview = await getBase64(file.originFileObj);
+  //   }
+  //   setPreviewImage(file.url || file.preview);
+  //   setPreviewOpen(true);
+  // };
+
   // Upload d'image (mock, pas d'upload réel)
   const handleImageChange = (info) => {
     if (info.file.status === "done" || info.file.status === "uploading") {
@@ -54,205 +117,371 @@ function CreerRecette() {
   };
 
   // Enregistrement (mock)
-  const handleSave = async (isDraft = false) => {
+  const handleSave = async (isDraft) => {
     try {
       setLoading(true);
+
+      // Validation du formulaire Ant Design
       const values = await form.validateFields();
+
+      // Validation manuelle des champs non gérés par Ant Design
+      if (!name.trim()) {
+        message.error("Le titre de la recette est obligatoire");
+        setLoading(false);
+        return;
+      }
+
+      if (!description.trim()) {
+        message.error("La description est obligatoire");
+        setLoading(false);
+        return;
+      }
+
+      if (!category) {
+        message.error("Veuillez sélectionner une catégorie");
+        setLoading(false);
+        return;
+      }
+
+      if (!duration) {
+        message.error("Veuillez sélectionner un temps de préparation");
+        setLoading(false);
+        return;
+      }
+
+      // Validation des ingrédients
+      const validIngredients = ingredients.filter((ing) => ing.name.trim() && ing.quantity.trim());
+      if (validIngredients.length === 0) {
+        message.error("Veuillez ajouter au moins un ingrédient avec un nom et une quantité");
+        setLoading(false);
+        return;
+      }
+
+      // Vérifier que tous les ingrédients ont un nom et une quantité
+      for (let i = 0; i < ingredients.length; i++) {
+        if (ingredients[i].name.trim() && !ingredients[i].quantity.trim()) {
+          message.error(`Veuillez ajouter une quantité pour l'ingrédient "${ingredients[i].name}"`);
+          setLoading(false);
+          return;
+        }
+        if (!ingredients[i].name.trim() && ingredients[i].quantity.trim()) {
+          message.error(
+            `Veuillez ajouter un nom pour l'ingrédient avec la quantité "${ingredients[i].quantity}"`
+          );
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Validation des étapes
+      const validSteps = steps.filter((step) => step.trim());
+      if (validSteps.length === 0) {
+        message.error("Veuillez ajouter au moins une étape");
+        setLoading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("author", userId);
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("steps", JSON.stringify(steps));
+      formData.append("ingredients", JSON.stringify(ingredients));
+      formData.append("category", category);
+      formData.append("duration", duration);
+      formData.append("isDraft", isDraft.toString());
+
+      if (fileList[0]?.originFileObj) {
+        formData.append("image", fileList[0].originFileObj);
+      }
+      // Si toutes les validations passent, envoyer la requête
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/add`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      console.log(donneesRecette);
       // Simuler l'enregistrement
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      message.success(isDraft ? "Brouillon enregistré !" : "Recette enregistrée !");
+      if (response.ok) {
+        message.success(isDraft ? "Brouillon enregistré !" : "Recette enregistrée !");
+        setLoading(false);
+      } else {
+        message.error("Erreur lors de l'enregistrement de la recette");
+        setLoading(false);
+      }
       router.push("/");
     } catch (err) {
-      if (!isDraft) message.error("Veuillez remplir tous les champs obligatoires.");
-    } finally {
+      if (err.errorFields) {
+        // Erreur de validation Ant Design
+        message.error("Veuillez remplir tous les champs obligatoires.");
+      } else {
+        message.error("Erreur lors de l'enregistrement de la recette");
+      }
       setLoading(false);
     }
   };
 
-  const handleBack = () => router.back();
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
   const { Option } = Select;
   return (
-    <ProtectedRoute>
-      <div className={styles.main}>
-        <div className={styles.pageContainer}>
-          <Header showBackButton={true} />
+    <div className={styles.main}>
+      <div className={styles.pageContainer}>
+        <Header showBackButton={true} />
 
-          <div className={styles.topHeader}>
-            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Nouvelle Recette</h1>
-            <div style={{ width: 48 }}></div>
-          </div>
-          <div className={styles.formContainer}>
-            <Form form={form} layout="vertical" initialValues={{ title: "", description: "" }}>
-              <Form.Item
-                label="Titre de la recette"
-                name="title"
-                rules={[{ required: true, message: "Le titre est obligatoire" }]}
+        <div className={styles.topHeader}>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Nouvelle Recette</h1>
+          <div style={{ width: 48 }}></div>
+        </div>
+        <div className={styles.formContainer}>
+          <Form form={form} layout="vertical" initialValues={{ title: "", description: "" }}>
+            <Form.Item
+              label="Titre de la recette"
+              name="title"
+              rules={[{ required: true, message: "Le titre est obligatoire" }]}
+            >
+              <Input
+                placeholder="Ex : Gâteau au chocolat"
+                className={styles.titleInput}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[{ required: true, message: "La description est obligatoire" }]}
+            >
+              <Input.TextArea
+                rows={3}
+                placeholder="Décrivez brièvement la recette..."
+                className={styles.descriptionInput}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Item>
+            <Upload
+              listType="picture-card"
+              fileList={fileList}
+              onPreview={handlePreview}
+              onChange={handleChange}
+              beforeUpload={() => false}
+            >
+              {fileList.length >= 1 ? null : uploadButton}
+            </Upload>
+            {previewImage && (
+              <Image
+                wrapperStyle={{ display: "none" }}
+                preview={{
+                  movable: true,
+                  toolbar: false,
+                  visible: previewOpen,
+                  onVisibleChange: (visible) => setPreviewOpen(visible),
+                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                }}
+                src={previewImage}
+              />
+            )}
+            {/* <div className={styles.upload}>
+              <Upload
+                showUploadList={true}
+                listType="picture-card"
+                beforeUpload={() => false}
+                onChange={handleImageChange}
+                accept="image/*"
+                onPreview={handlePreview}
               >
-                <Input placeholder="Ex : Gâteau au chocolat" className={styles.titleInput} />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                name="description"
-                rules={[{ required: true, message: "La description est obligatoire" }]}
-              >
-                <Input.TextArea
-                  rows={3}
-                  placeholder="Décrivez brièvement la recette..."
-                  className={styles.descriptionInput}
+                <Button icon={<UploadOutlined />}></Button>
+                {imageUrl.length >= 8 ? null : uploadButton}
+              </Upload>
+              {imageUrl && (
+                <Image
+                  src={imageUrl}
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                  }}
+                  alt="aperçu recette"
+                  style={{
+                    marginTop: 16,
+                    maxWidth: "100%",
+                    borderRadius: 12,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  }}
                 />
-              </Form.Item>
-              <div className={styles.upload}>
-                <Upload
-                  showUploadList={false}
-                  beforeUpload={() => false}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                >
-                  <Button icon={<UploadOutlined />}>Ajouter une image</Button>
-                </Upload>
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt="aperçu recette"
-                    style={{
-                      marginTop: 16,
-                      maxWidth: "100%",
-                      borderRadius: 12,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                    }}
-                  />
-                )}
-              </div>
-              <div className={styles.sectionTitle}>Temps de préparation</div>
-              <div className={styles.timeContainer}>
-                <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
-                  <Radio.Button className={styles.timeRadioButton} value="fast">
-                    Rapide
-                  </Radio.Button>
-                  <Radio.Button className={styles.timeRadioButton} value="medium">
-                    Moyen
-                  </Radio.Button>
-                  <Radio.Button className={styles.timeRadioButton} value="long">
-                    Long
-                  </Radio.Button>
-                </Radio.Group>
-              </div>
-              <div className={styles.sectionTitle}>
-                Ingrédients
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  className={styles.addButton}
-                  onClick={addIngredient}
-                  size="small"
-                >
-                  Ajouter
-                </Button>
-              </div>
-              <div className={styles.ingredientList}>
-                {ingredients.map((ingredient, idx) => (
-                  <div key={idx} className={styles.ingredientItem}>
-                    <Input
-                      className={styles.ingredientInput}
-                      placeholder="Nom de l'ingrédient"
-                      value={ingredient.name}
-                      type="text"
-                      onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
-                    />
-                    <Input
-                      className={styles.ingredientInput}
-                      placeholder="Quantité (ex : 200g)"
-                      value={ingredient.quantity}
-                      type="number"
-                      onChange={(e) => handleIngredientChange(idx, "quantity", e.target.value)}
-                      rules={[{ type: "number", message: "Veuillez entrer une quantité valide" }]}
-                      inputMode="numeric"
-                      min={0}
-                    />
+              )}
+            </div> */}
 
-                    <Select
-                      className={styles.ingredientSelect}
-                      defaultValue="gr"
-                      style={{ width: 100 }}
-                      onChange={handleChange}
-                      options={[
-                        { value: "gr", label: "gr" },
-                        { value: "cl", label: "cl" },
-                        { value: "ml", label: "ml" },
-                        { value: "càs", label: "càs" },
-                        { value: "càc", label: "càc" },
-                        { value: "unité", label: "unité" },
-                      ]}
-                    />
-                    <button
-                      className={styles.removeButton}
-                      onClick={() => removeIngredient(idx)}
-                      type="button"
-                      aria-label="Supprimer l'ingrédient"
-                    >
-                      <DeleteOutlined />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className={styles.sectionTitle}>
-                Étapes
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  className={styles.addButton}
-                  onClick={addStep}
-                  size="small"
+            <div className={styles.sectionTitle}>Temps de préparation</div>
+            <div className={styles.timeContainer}>
+              <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
+                <Radio.Button
+                  className={styles.timeRadioButton}
+                  value="Plat"
+                  onClick={() => setCategory("Plat")}
                 >
-                  Ajouter
-                </Button>
-              </div>
-              <div className={styles.stepList}>
-                {steps.map((step, idx) => (
-                  <div key={idx} className={styles.stepItem}>
-                    <Input.TextArea
-                      className={styles.stepInput}
-                      placeholder={`Étape ${idx + 1}`}
-                      value={step}
-                      onChange={(e) => handleStepChange(idx, e.target.value)}
-                      autoSize={{ minRows: 1, maxRows: 3 }}
-                    />
-                    <button
-                      className={styles.removeButton}
-                      onClick={() => removeStep(idx)}
-                      type="button"
-                      aria-label="Supprimer l'étape"
-                    >
-                      <DeleteOutlined />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className={styles.actionButtons}>
-                <Button
-                  className={styles.draftButton}
-                  onClick={() => handleSave(true)}
-                  loading={loading}
+                  Plat
+                </Radio.Button>
+                <Radio.Button
+                  className={styles.timeRadioButton}
+                  value="Entrée"
+                  onClick={() => setCategory("Entrée")}
                 >
-                  Enregistrer en brouillon
-                </Button>
-                <Button
-                  type="primary"
-                  className={styles.saveButton}
-                  onClick={() => handleSave(false)}
-                  loading={loading}
+                  Entrée
+                </Radio.Button>
+                <Radio.Button
+                  className={styles.timeRadioButton}
+                  value="Dessert"
+                  onClick={() => setCategory("Dessert")}
                 >
-                  Enregistrer la recette
-                </Button>
-              </div>
-            </Form>
-          </div>
+                  Dessert
+                </Radio.Button>
+                <Radio.Button
+                  className={styles.timeRadioButton}
+                  value="Boisson"
+                  onClick={() => setCategory("Boisson")}
+                >
+                  Boisson
+                </Radio.Button>
+              </Radio.Group>
+            </div>
+            <div className={styles.sectionTitle}>Temps de préparation</div>
+            <div className={styles.timeContainer}>
+              <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
+                <Radio.Button
+                  className={styles.timeRadioButton}
+                  value="rapide"
+                  onClick={() => setDuration("Rapide")}
+                >
+                  Rapide
+                </Radio.Button>
+                <Radio.Button
+                  className={styles.timeRadioButton}
+                  value="moyen"
+                  onClick={() => setDuration("Moyen")}
+                >
+                  Moyen
+                </Radio.Button>
+                <Radio.Button
+                  className={styles.timeRadioButton}
+                  value="long"
+                  onClick={() => setDuration("Long")}
+                >
+                  Long
+                </Radio.Button>
+              </Radio.Group>
+            </div>
+            <div className={styles.sectionTitle}>
+              Ingrédients
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                className={styles.addButton}
+                onClick={addIngredient}
+                size="small"
+              >
+                Ajouter
+              </Button>
+            </div>
+            <div className={styles.ingredientList}>
+              {ingredients.map((ingredient, idx) => (
+                <div key={idx} className={styles.ingredientItem}>
+                  <Input
+                    className={styles.ingredientInput}
+                    placeholder="Nom de l'ingrédient"
+                    value={ingredient.name}
+                    type="text"
+                    onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
+                  />
+                  <Input
+                    className={styles.ingredientInput}
+                    placeholder="Quantité (ex : 200g)"
+                    value={ingredient.quantity}
+                    type="number"
+                    onChange={(e) => handleIngredientChange(idx, "quantity", e.target.value)}
+                    rules={[{ type: "number", message: "Veuillez entrer une quantité valide" }]}
+                    inputMode="numeric"
+                    min={0}
+                  />
+
+                  <Select
+                    className={styles.ingredientSelect}
+                    defaultValue="gr"
+                    style={{ width: 100 }}
+                    onChange={(value) => handleIngredientChange(idx, "unit", value)}
+                    options={[
+                      { value: "gr", label: "gr" },
+                      { value: "cl", label: "cl" },
+                      { value: "ml", label: "ml" },
+                      { value: "càs", label: "càs" },
+                      { value: "càc", label: "càc" },
+                      { value: "unité", label: "unité" },
+                    ]}
+                  />
+                  <button
+                    className={styles.removeButton}
+                    onClick={() => removeIngredient(idx)}
+                    type="button"
+                    aria-label="Supprimer l'ingrédient"
+                  >
+                    <DeleteOutlined />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className={styles.sectionTitle}>
+              Étapes
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                className={styles.addButton}
+                onClick={addStep}
+                size="small"
+              >
+                Ajouter
+              </Button>
+            </div>
+            <div className={styles.stepList}>
+              {steps.map((step, idx) => (
+                <div key={idx} className={styles.stepItem}>
+                  <Input.TextArea
+                    className={styles.stepInput}
+                    placeholder={`Étape ${idx + 1}`}
+                    value={step}
+                    onChange={(e) => handleStepChange(idx, e.target.value)}
+                    autoSize={{ minRows: 1, maxRows: 3 }}
+                  />
+                  <button
+                    className={styles.removeButton}
+                    onClick={() => removeStep(idx)}
+                    type="button"
+                    aria-label="Supprimer l'étape"
+                  >
+                    <DeleteOutlined />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className={styles.actionButtons}>
+              <Button
+                className={styles.draftButton}
+                onClick={() => handleSave(true)}
+                loading={loading}
+              >
+                Enregistrer en brouillon
+              </Button>
+              <Button
+                type="primary"
+                className={styles.saveButton}
+                onClick={() => handleSave(false)}
+                loading={loading}
+              >
+                Enregistrer la recette
+              </Button>
+            </div>
+          </Form>
         </div>
       </div>
-    </ProtectedRoute>
+    </div>
   );
 }
 

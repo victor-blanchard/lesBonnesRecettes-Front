@@ -10,8 +10,9 @@ import {
 } from "@ant-design/icons";
 import Header from "../components/Header";
 import styles from "../styles/Connexion.module.css";
-import { useDispatch } from "react-redux";
-import { userIsConnected } from "../reducers/users";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { userIsConnected, setUserId } from "../reducers/users";
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/signUp`, {
@@ -22,6 +23,15 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 // });
 
 function Connexion() {
+  const userConnected = useSelector((state) => state.users.value.userIsConnected);
+  const userId = useSelector((state) => state.users.value.userId);
+
+  useEffect(() => {
+    if (userConnected === true) {
+      router.push("/");
+    }
+  }, [userIsConnected, router]);
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -49,6 +59,7 @@ function Connexion() {
           console.log("Connexion:", data);
           // message.success("Connexion réussie !");
           dispatch(userIsConnected(true));
+          dispatch(setUserId(data._id));
           router.push("/");
         } else {
           if (response.status === 401) {
@@ -69,6 +80,7 @@ function Connexion() {
           console.log("Inscription:", data);
           message.success("Inscription réussie !");
           dispatch(userIsConnected(true));
+          dispatch(setUserId(data._id));
           router.push("/");
         } else {
           if (response.status === 400) {
@@ -236,7 +248,7 @@ function Connexion() {
               </Form.Item>
             )}
 
-            {isLogin && (
+            {/* {isLogin && (
               <Form.Item className={styles.rememberMe}>
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Se souvenir de moi</Checkbox>
@@ -245,7 +257,7 @@ function Connexion() {
                   Mot de passe oublié ?
                 </a>
               </Form.Item>
-            )}
+            )} */}
 
             <Form.Item>
               <Button
@@ -261,7 +273,7 @@ function Connexion() {
             </Form.Item>
           </Form>
 
-          <Divider className={styles.divider}>
+          {/* <Divider className={styles.divider}>
             <span className={styles.dividerText}>ou</span>
           </Divider>
 
@@ -269,7 +281,7 @@ function Connexion() {
             <Button size="large" className={styles.socialButton} block>
               Continuer avec Google
             </Button>
-          </div>
+          </div> */}
 
           <div className={styles.switchMode}>
             <p>
