@@ -17,11 +17,11 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 import Header from "../components/Header";
-import { authGuard } from "../hooks/authGuard";
+import { useAuthGuard } from "../hooks/useAuthGuard";
 import { useSelector } from "react-redux";
 
 function CreerRecette() {
-  authGuard();
+  const { userIsConnected } = useAuthGuard();
   const userId = useSelector((state) => state.users.value.userId);
   const router = useRouter();
   const [form] = Form.useForm();
@@ -88,25 +88,6 @@ function CreerRecette() {
     </button>
   );
 
-  // const [previewOpen, setPreviewOpen] = useState(false);
-  // const [previewImage, setPreviewImage] = useState("");
-
-  // const getBase64 = (file) =>
-  //   new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = () => resolve(reader.result);
-  //     reader.onerror = (error) => reject(error);
-  //   });
-
-  // const handlePreview = async (file) => {
-  //   if (!file.url && !file.preview) {
-  //     file.preview = await getBase64(file.originFileObj);
-  //   }
-  //   setPreviewImage(file.url || file.preview);
-  //   setPreviewOpen(true);
-  // };
-
   // Upload d'image (mock, pas d'upload réel)
   const handleImageChange = (info) => {
     if (info.file.status === "done" || info.file.status === "uploading") {
@@ -116,7 +97,6 @@ function CreerRecette() {
     }
   };
 
-  // Enregistrement (mock)
   const handleSave = async (isDraft) => {
     try {
       setLoading(true);
@@ -258,6 +238,7 @@ function CreerRecette() {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Form.Item>
+            <div className={styles.sectionTitle}>Photo</div>
             <Upload
               listType="picture-card"
               fileList={fileList}
@@ -280,36 +261,6 @@ function CreerRecette() {
                 src={previewImage}
               />
             )}
-            {/* <div className={styles.upload}>
-              <Upload
-                showUploadList={true}
-                listType="picture-card"
-                beforeUpload={() => false}
-                onChange={handleImageChange}
-                accept="image/*"
-                onPreview={handlePreview}
-              >
-                <Button icon={<UploadOutlined />}></Button>
-                {imageUrl.length >= 8 ? null : uploadButton}
-              </Upload>
-              {imageUrl && (
-                <Image
-                  src={imageUrl}
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                  }}
-                  alt="aperçu recette"
-                  style={{
-                    marginTop: 16,
-                    maxWidth: "100%",
-                    borderRadius: 12,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                  }}
-                />
-              )}
-            </div> */}
 
             <div className={styles.sectionTitle}>Temps de préparation</div>
             <div className={styles.timeContainer}>
@@ -414,7 +365,7 @@ function CreerRecette() {
                       { value: "ml", label: "ml" },
                       { value: "càs", label: "càs" },
                       { value: "càc", label: "càc" },
-                      { value: "unité", label: "unité" },
+                      { value: "", label: "unité" },
                     ]}
                   />
                   <button

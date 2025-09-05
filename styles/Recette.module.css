@@ -81,14 +81,14 @@
 
 .recipeHero {
   position: relative;
-  height: 300px;
+  height: 20%;
   overflow: hidden;
 }
 
 .recipeImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
 }
 
 .recipeOverlay {
