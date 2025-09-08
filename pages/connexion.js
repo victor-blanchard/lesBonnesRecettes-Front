@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Form, Input, Button, Checkbox, message, Divider } from "antd";
+import { Form, Input, Button, Checkbox, message, Divider, Upload, Image } from "antd";
+import ImgCrop from "antd-img-crop";
 import {
   UserOutlined,
   LockOutlined,
   MailOutlined,
   EyeInvisibleOutlined,
   EyeTwoTone,
+  PlusOutlined,
 } from "@ant-design/icons";
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 import Header from "../components/Header";
 import styles from "../styles/Connexion.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,6 +48,23 @@ function Connexion() {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [fileList, setFileList] = useState([]);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
 
   const dispatch = useDispatch();
 
@@ -57,7 +83,7 @@ function Connexion() {
         if (response.ok) {
           const data = await response.json();
           console.log("Connexion:", data);
-          // message.success("Connexion réussie !");
+          message.success("Connexion réussie !");
           dispatch(userIsConnected(true));
           dispatch(setUserId(data._id));
           router.push("/");
@@ -69,10 +95,19 @@ function Connexion() {
           }
         }
       } else {
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("firstName", firstName);
+        formData.append("lastName", lastName);
+
+        if (fileList[0]?.originFileObj) {
+          formData.append("profilePicture", fileList[0].originFileObj);
+        }
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/signUp`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password, firstName, lastName }),
+          body: formData,
           credentials: "include",
         });
         if (response.ok) {
@@ -245,6 +280,34 @@ function Connexion() {
                   className={styles.input}
                   iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                 />
+              </Form.Item>
+            )}
+            {!isLogin && (
+              <Form.Item name="profilePicture" className={styles.uploadPicture}>
+                <ImgCrop quality={1} aspect={1} cropShape="round">
+                  <Upload
+                    listType="picture-circle"
+                    fileList={fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    // beforeUpload={() => false}
+                  >
+                    {fileList.length >= 1 ? null : uploadButton}
+                  </Upload>
+                </ImgCrop>
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{ display: "none" }}
+                    preview={{
+                      movable: true,
+                      toolbar: false,
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                    }}
+                    src={previewImage}
+                  />
+                )}
               </Form.Item>
             )}
 

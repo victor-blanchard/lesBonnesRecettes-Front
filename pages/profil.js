@@ -15,12 +15,17 @@ import {
 } from "@ant-design/icons";
 import Header from "../components/Header";
 import ProtectedRoute from "../components/ProtectedRoute";
-import { authGuard } from "../hooks/authGuard";
+import { useAuthGuard } from "../hooks/useAuthGuard";
+import { useDispatch, useSelector } from "react-redux";
+import { userIsConnected, setUserId } from "../reducers/users";
 
 const { TextArea } = Input;
 
 function Profil() {
-  authGuard();
+  const dispatch = useDispatch();
+  const userId = useSelector((state) => state.users.value.userId);
+  const userConnected = useSelector((state) => state.users.value.userIsConnected);
+  const { userAuthorized } = useAuthGuard();
   const router = useRouter();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,10 +67,6 @@ function Profil() {
     },
   ]);
 
-  const handleBack = () => {
-    router.push("/");
-  };
-
   const handleEditProfile = () => {
     form.setFieldsValue({
       name: profileData.name,
@@ -104,6 +105,8 @@ function Profil() {
       okText: "Oui",
       cancelText: "Non",
       onOk: () => {
+        dispatch(userIsConnected(false));
+        dispatch(setUserId(null));
         message.success("Déconnexion réussie");
         router.push("/");
       },

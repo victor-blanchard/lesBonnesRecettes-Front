@@ -59,7 +59,7 @@
 }
 
 .divider {
-  margin: 2rem 0;
+  margin: 1rem 0;
   border-color: #e8e8e8;
 }
 
@@ -67,14 +67,16 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  margin-top: 1rem;
   flex-wrap: wrap;
-  justify-content: center;
+  width: 100%;
 }
 
 .filterButton {
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
   border-color: #d9d9d9;
   color: #666;
   font-weight: 500;
@@ -84,6 +86,10 @@
   height: auto;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.colorPrimary {
+  color: #ff7900;
 }
 
 .filterButton:hover {
@@ -125,6 +131,7 @@
 }
 
 .card {
+  aspect-ratio: 16/9;
   background: white;
   border-radius: 20px;
   overflow: hidden;
@@ -132,7 +139,7 @@
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
-  height: 280px;
+  width: 100%;
 }
 
 .card:hover {
@@ -142,7 +149,6 @@
 
 .cardImage {
   width: 100%;
-  /* height: 200px; */
   object-fit: cover;
   transition: all 0.3s ease;
 }
@@ -157,7 +163,7 @@
   left: 0;
   right: 0;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  padding: 1.5rem;
+  padding: 1rem;
   color: white;
 }
 
@@ -238,11 +244,21 @@
   }
 
   .card {
-    height: 250px;
+    aspect-ratio: 16/9;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    width: 100%;
   }
 
   .cardImage {
-    height: 170px;
+    width: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
   }
 
   .topHeader {

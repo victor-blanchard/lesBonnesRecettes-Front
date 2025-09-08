@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/NewRecipe.module.css";
 import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
+import ImgCrop from "antd-img-crop";
 import {
   ArrowLeftOutlined,
   HomeOutlined,
@@ -80,22 +81,25 @@ function CreerRecette() {
     setPreviewImage(file.url || file.preview);
     setPreviewOpen(true);
   };
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+  const handleChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+
+    // Si une image a été ajoutée et recadrée, la traiter
+    if (newFileList.length > 0 && newFileList[0].originFileObj) {
+      const file = newFileList[0].originFileObj;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImageUrl(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
   );
-
-  // Upload d'image (mock, pas d'upload réel)
-  const handleImageChange = (info) => {
-    if (info.file.status === "done" || info.file.status === "uploading") {
-      const reader = new FileReader();
-      reader.onload = (e) => setImageUrl(e.target.result);
-      reader.readAsDataURL(info.file.originFileObj);
-    }
-  };
 
   const handleSave = async (isDraft) => {
     try {
@@ -239,15 +243,19 @@ function CreerRecette() {
               />
             </Form.Item>
             <div className={styles.sectionTitle}>Photo</div>
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              onPreview={handlePreview}
-              onChange={handleChange}
-              beforeUpload={() => false}
-            >
-              {fileList.length >= 1 ? null : uploadButton}
-            </Upload>
+
+            <ImgCrop quality={1} aspect={16 / 9} cropShape="rect" zoomSlider>
+              <Upload
+                listType="picture-card"
+                fileList={fileList}
+                onChange={handleChange}
+                onPreview={handlePreview}
+                // beforeUpload={() => false}
+              >
+                {fileList.length >= 1 ? null : uploadButton}
+              </Upload>
+            </ImgCrop>
+
             {previewImage && (
               <Image
                 wrapperStyle={{ display: "none" }}
@@ -267,29 +275,29 @@ function CreerRecette() {
               <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="Plat"
+                  value="Main course"
                   onClick={() => setCategory("Plat")}
                 >
                   Plat
                 </Radio.Button>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="Entrée"
-                  onClick={() => setCategory("Entrée")}
+                  value="Starter"
+                  onClick={() => setCategory("Starter")}
                 >
                   Entrée
                 </Radio.Button>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="Dessert"
-                  onClick={() => setCategory("Dessert")}
+                  value="Desert"
+                  onClick={() => setCategory("Desert")}
                 >
                   Dessert
                 </Radio.Button>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="Boisson"
-                  onClick={() => setCategory("Boisson")}
+                  value="Drink"
+                  onClick={() => setCategory("Drink")}
                 >
                   Boisson
                 </Radio.Button>
@@ -300,21 +308,21 @@ function CreerRecette() {
               <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="rapide"
+                  value="Rapide"
                   onClick={() => setDuration("Rapide")}
                 >
                   Rapide
                 </Radio.Button>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="moyen"
+                  value="Moyen"
                   onClick={() => setDuration("Moyen")}
                 >
                   Moyen
                 </Radio.Button>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="long"
+                  value="Long"
                   onClick={() => setDuration("Long")}
                 >
                   Long

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Button, Dropdown, Space } from "antd";
+import { Button, Dropdown, Space, message } from "antd";
 import { ArrowLeftOutlined, MenuOutlined } from "@ant-design/icons";
 import styles from "../styles/Header.module.css";
 import { useState, useEffect } from "react";
@@ -23,6 +23,7 @@ function Header({ showBackButton = false, onBackClick }) {
     if (response.ok) {
       dispatch(userIsConnected(false));
       dispatch(setUserId(null));
+      message.success("Déconnexion réussie !");
     }
   };
 

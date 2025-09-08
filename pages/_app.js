@@ -1,14 +1,14 @@
 import "../styles/globals.css";
 import Head from "next/head";
-
 import { Provider } from "react-redux";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import users from "../reducers/users";
+import recipes from "../reducers/recipes";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const reducers = combineReducers({ users });
+const reducers = combineReducers({ users, recipes });
 
 // Configuration conditionnelle pour Next.js
 const persistConfig = {
@@ -21,7 +21,7 @@ const persistConfig = {
           setItem: () => Promise.resolve(),
           removeItem: () => Promise.resolve(),
         },
-  whitelist: ["users"], // Spécifier explicitement les reducers à persister
+  whitelist: ["users", "recipes"], // Spécifier explicitement les reducers à persister
 };
 
 const store = configureStore({

@@ -165,7 +165,7 @@ function Recette() {
 
             {/* Actions */}
             <div className={styles.actionsSection}>
-              <Button
+              {/* <Button
                 icon={isFavorite ? <HeartFilled /> : <HeartOutlined />}
                 className={`${styles.actionButton} ${styles.favoriteButton} ${
                   isFavorite ? styles.active : ""
@@ -173,7 +173,7 @@ function Recette() {
                 onClick={handleFavorite}
               >
                 {isFavorite ? "Favori" : "Favoris"}
-              </Button>
+              </Button> */}
               <Button
                 icon={<ShareAltOutlined />}
                 className={`${styles.actionButton} ${styles.shareButton}`}
@@ -220,14 +220,12 @@ function Recette() {
             <div className={styles.authorSection}>
               <Avatar
                 size={60}
-                src={recipe.author.profilePicture}
+                src={recipe.author?.profilePicture}
                 icon={<UserOutlined />}
                 className={styles.authorAvatar}
               />
               <div className={styles.authorInfo}>
-                <h4>
-                  {recipe.author.firstName} {recipe.author.lastName}
-                </h4>
+                <h4>{recipe.author?.firstName}</h4>
                 <p>{formatDate(recipe.createdAt)}</p>
               </div>
             </div>

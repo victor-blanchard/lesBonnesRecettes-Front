@@ -219,6 +219,16 @@
   }
 }
 
+.uploadPicture {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.uploadPicture .ant-upload-list-item {
+  width: 100px;
+  height: 100px;
+}
+
 /* Styles pour les très petits écrans */
 @media (max-width: 480px) {
   .formCard {

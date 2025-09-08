@@ -5,7 +5,7 @@
   right: 0;
   z-index: 1000;
   background: #fafafa;
-  padding-top: env(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top) + 20px;
   padding-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
