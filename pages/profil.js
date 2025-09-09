@@ -12,12 +12,15 @@ import {
   SettingOutlined,
   LogoutOutlined,
   PlusOutlined,
+  FileOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import Header from "../components/Header";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useAuthGuard } from "../hooks/useAuthGuard";
 import { useDispatch, useSelector } from "react-redux";
 import { userIsConnected, setUserId } from "../reducers/users";
+import { useEffect } from "react";
 
 const { TextArea } = Input;
 
@@ -28,50 +31,46 @@ function Profil() {
   const { userAuthorized } = useAuthGuard();
   const router = useRouter();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userRecipes, setUserRecipes] = useState([]);
   const [form] = Form.useForm();
+  const [profileData, setProfileData] = useState({});
+  const [userDrafts, setUserDrafts] = useState([]);
 
-  // Données fictives du profil (à remplacer par des données réelles)
-  const [profileData, setProfileData] = useState({
-    name: "Jeff Dupont",
-    email: "jeff.dupont@email.com",
-    avatar: "/alf.jpg",
-    bio: "Passionné de cuisine depuis toujours. J'aime partager mes recettes et découvrir de nouveaux plats.",
-    recipesCount: 15,
-    favoritesCount: 8,
-    totalTime: "12h 30m",
-  });
-
-  // Données fictives des recettes (à remplacer par des données réelles)
-  const [userRecipes] = useState([
-    {
-      id: 1,
-      title: "Carrot Cake",
-      time: "30 mins",
-      image: "/carrotCake.jpeg",
-      isFavorite: true,
-    },
-    {
-      id: 2,
-      title: "Biscuit Cake",
-      time: "45 mins",
-      image: "/carrotCake.jpeg",
-      isFavorite: false,
-    },
-    {
-      id: 3,
-      title: "Velo Cake",
-      time: "60 mins",
-      image: "/carrotCake.jpeg",
-      isFavorite: true,
-    },
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profileResponse, recipesResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+            method: "GET",
+            credentials: "include",
+          }),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/user/${userId}`),
+        ]);
+        const [profileData, recipesData] = await Promise.all([
+          profileResponse.json(),
+          recipesResponse.json(),
+        ]);
+        setProfileData(profileData.user);
+        const publishedRecipes = recipesData.recipes?.filter((recipe) => recipe.isDraft === false);
+        setUserRecipes(publishedRecipes);
+        const drafts = recipesData.recipes?.filter((recipe) => recipe.isDraft === true);
+        setUserDrafts(drafts);
+        console.log(profileData, recipesData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [userId]);
 
   const handleEditProfile = () => {
     form.setFieldsValue({
-      name: profileData.name,
+      firstName: profileData.firstName,
+      lastName: profileData.lastName,
       email: profileData.email,
-      bio: profileData.bio,
     });
     setIsEditModalVisible(true);
   };
@@ -98,29 +97,52 @@ function Profil() {
     }
   };
 
-  const handleLogout = () => {
+  const handleDeleteAccount = () => {
     Modal.confirm({
-      title: "Se déconnecter",
-      content: "Êtes-vous sûr de vouloir vous déconnecter ?",
+      title: "Supprimer le compte",
+      content:
+        "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible. Vous perdrez toutes vos recettes et brouillons.",
       okText: "Oui",
       cancelText: "Non",
-      onOk: () => {
-        dispatch(userIsConnected(false));
-        dispatch(setUserId(null));
-        message.success("Déconnexion réussie");
-        router.push("/");
+      onOk: async () => {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/delete`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+
+          // Transformer la réponse en JSON
+          const data = await response.json();
+          console.log("response data: ", data);
+
+          if (data.result) {
+            dispatch(userIsConnected(false));
+            dispatch(setUserId(null));
+            message.success("Compte supprimé avec succès");
+            router.push("/");
+          } else {
+            message.error(data.error || "Erreur lors de la suppression du compte");
+          }
+        } catch (error) {
+          console.error("Error deleting account:", error);
+          message.error("Erreur lors du fetch");
+        }
       },
     });
   };
 
   const renderRecipeCard = (recipe) => (
-    <div key={recipe.id} className={styles.recipeCard}>
-      <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+    <div
+      key={recipe._id}
+      className={styles.recipeCard}
+      onClick={() => router.push(`/recette/${recipe._id}`)}
+    >
+      <img src={recipe.picture} alt={recipe.title} className={styles.recipeImage} />
       <div className={styles.recipeInfo}>
-        <h3 className={styles.recipeTitle}>{recipe.title}</h3>
+        <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         <div className={styles.recipeTime}>
           <ClockCircleOutlined />
-          {recipe.time}
+          {recipe.duration}
         </div>
       </div>
     </div>
@@ -140,15 +162,15 @@ function Profil() {
           <div className={styles.profileSection}>
             <Avatar
               size={120}
-              src={profileData.avatar}
+              src={profileData?.profilePicture}
               icon={<UserOutlined />}
               className={styles.profileAvatar}
             />
-            <h2 className={styles.profileName}>{profileData.name}</h2>
-            <p className={styles.profileEmail}>{profileData.email}</p>
-            <p style={{ textAlign: "center", color: "#666", marginBottom: "1rem" }}>
-              {profileData.bio}
-            </p>
+            <h2 className={styles.profileName}>
+              {profileData?.firstName} {profileData?.lastName}
+            </h2>
+            <p className={styles.profileEmail}>{profileData?.email}</p>
+            <p style={{ textAlign: "center", color: "#666", marginBottom: "1rem" }}></p>
             <Button
               type="default"
               icon={<EditOutlined />}
@@ -162,72 +184,64 @@ function Profil() {
           {/* Section statistiques */}
           <div className={styles.statsSection}>
             <div className={styles.statItem}>
-              <div className={styles.statNumber}>{profileData.recipesCount}</div>
-              <div className={styles.statLabel}>Recettes créées</div>
+              <div className={styles.statNumber}>{userRecipes?.length}</div>
+              <div className={styles.statLabel}>Recette</div>
             </div>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{profileData.favoritesCount}</div>
+            {/* <div className={styles.statItem}>
+              <div className={styles.statNumber}>{profileData.likedRecipes.length}</div>
               <div className={styles.statLabel}>Favoris</div>
-            </div>
+            </div> */}
             <div className={styles.statItem}>
-              <div className={styles.statNumber}>{profileData.totalTime}</div>
-              <div className={styles.statLabel}>Temps total</div>
+              <div className={styles.statNumber}>{userDrafts?.length}</div>
+              <div className={styles.statLabel}>Brouillons</div>
             </div>
           </div>
 
-          {/* Section mes recettes */}
+          {/* Section mes recettes  */}
           <h3 className={styles.sectionTitle}>
             <BookOutlined style={{ marginRight: "0.5rem" }} />
             Mes Recettes
           </h3>
 
-          {userRecipes.length > 0 ? (
-            <div className={styles.recipesGrid}>{userRecipes.map(renderRecipeCard)}</div>
+          {userRecipes?.length > 0 ? (
+            <div className={styles.recipesGrid}>{userRecipes?.map(renderRecipeCard)}</div>
           ) : (
             <div className={styles.emptyState}>
-              <PlusOutlined className={styles.emptyStateIcon} />
-              <h3>Aucune recette créée</h3>
-              <p>Commencez par créer votre première recette !</p>
-              <Button type="primary" size="large" style={{ marginTop: "1rem" }}>
+              <h3>Aucune recette</h3>
+              <p>On attend votre première recette !</p>
+              <Button
+                type="primary"
+                size="large"
+                style={{ marginTop: "1rem" }}
+                onClick={() => router.push("/creer-recette")}
+              >
                 Créer une recette
               </Button>
             </div>
           )}
-
-          {/* Section paramètres */}
+          {/* Section Bouillons */}
           <h3 className={styles.sectionTitle}>
-            <SettingOutlined style={{ marginRight: "0.5rem" }} />
-            Paramètres
+            <FileOutlined style={{ marginRight: "0.5rem" }} />
+            Mes Brouillons
           </h3>
 
-          <div className={styles.settingsSection}>
-            {/* <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Notifications push</span>
-              <Switch defaultChecked />
-            </div> */}
-            {/* <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Notifications email</span>
-              <Switch defaultChecked />
-            </div> */}
-            {/* <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Mode sombre</span>
-              <Switch />
-            </div> */}
-            <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Langue</span>
-              <span className={styles.settingValue}>Français</span>
+          {userDrafts?.length > 0 ? (
+            <div className={styles.recipesGrid}>{userDrafts?.map(renderRecipeCard)}</div>
+          ) : (
+            <div className={styles.emptyState}>
+              <h3>Aucun brouillon</h3>
             </div>
-          </div>
+          )}
 
-          {/* Bouton de déconnexion */}
+          {/* Bouton de suppression de compte */}
           <Button
             type="primary"
             danger
-            icon={<LogoutOutlined />}
+            icon={<DeleteOutlined />}
             className={styles.logoutButton}
-            onClick={handleLogout}
+            onClick={handleDeleteAccount}
           >
-            Se déconnecter
+            Supprimer le compte
           </Button>
         </div>
       </main>
@@ -242,11 +256,18 @@ function Profil() {
       >
         <Form form={form} layout="vertical" onFinish={handleSaveProfile}>
           <Form.Item
-            name="name"
-            label="Nom complet"
+            name="firstName"
+            label="Prénom"
+            rules={[{ required: true, message: "Veuillez saisir votre prénom" }]}
+          >
+            <Input value={profileData?.firstName} placeholder="Votre prénom" />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            label="Nom"
             rules={[{ required: true, message: "Veuillez saisir votre nom" }]}
           >
-            <Input placeholder="Votre nom complet" />
+            <Input value={profileData?.lastName} placeholder="Votre nom complet" />
           </Form.Item>
 
           <Form.Item
@@ -258,10 +279,6 @@ function Profil() {
             ]}
           >
             <Input placeholder="votre.email@example.com" />
-          </Form.Item>
-
-          <Form.Item name="bio" label="Bio">
-            <TextArea rows={4} placeholder="Parlez-nous un peu de vous..." />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>

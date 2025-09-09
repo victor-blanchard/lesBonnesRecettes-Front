@@ -70,7 +70,6 @@ function Connexion() {
 
   const onFinish = async (values) => {
     setIsLoading(true);
-
     try {
       if (isLogin) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/signIn`, {
@@ -79,21 +78,24 @@ function Connexion() {
           body: JSON.stringify({ email, password }),
           credentials: "include",
         });
-        console.log("Connexion:", email, password);
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Connexion:", data);
-          message.success("Connexion réussie !");
-          dispatch(userIsConnected(true));
-          dispatch(setUserId(data._id));
-          router.push("/");
-        } else {
-          if (response.status === 401) {
-            message.error("Email ou mot de passe incorrect !");
+        console.log("Connexion:");
+        setTimeout(async () => {
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Connexion:", data);
+            message.success("Connexion réussie !");
+            dispatch(userIsConnected(true));
+            dispatch(setUserId(data._id));
+            router.push("/");
           } else {
-            message.error("Connexion échouée !");
+            if (response.status === 401) {
+              message.error("Email ou mot de passe incorrect !");
+            } else {
+              message.error("Connexion échouée !");
+            }
           }
-        }
+          setIsLoading(false);
+        }, 1000);
       } else {
         const formData = new FormData();
         formData.append("email", email);
@@ -110,6 +112,9 @@ function Connexion() {
           body: formData,
           credentials: "include",
         });
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
         if (response.ok) {
           const data = await response.json();
           console.log("Inscription:", data);
@@ -127,8 +132,6 @@ function Connexion() {
       }
     } catch (error) {
       message.error("Une erreur est survenue");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -170,13 +173,12 @@ function Connexion() {
               >
                 <Input
                   prefix={<UserOutlined />}
-                  autocomplete="given-name"
+                  autoComplete="given-name"
                   placeholder="Prénom"
                   size="large"
                   className={styles.input}
                   onChange={(e) => {
                     setFirstName(e.target.value);
-                    console.log("Prénom:", firstName);
                   }}
                 />
               </Form.Item>
@@ -194,12 +196,11 @@ function Connexion() {
                 <Input
                   prefix={<UserOutlined />}
                   placeholder="Nom"
-                  autocomplete="family-name"
+                  autoComplete="family-name"
                   size="large"
                   className={styles.input}
                   onChange={(e) => {
                     setLastName(e.target.value);
-                    console.log("Nom:", lastName);
                   }}
                 />
               </Form.Item>
@@ -214,7 +215,6 @@ function Connexion() {
                 },
                 {
                   type: "email",
-                  autocomplete: "email",
                   message: "Veuillez saisir un email valide",
                 },
               ]}
@@ -222,17 +222,18 @@ function Connexion() {
               <Input
                 prefix={<MailOutlined />}
                 placeholder="Email"
+                autoComplete="email"
                 size="large"
                 className={styles.input}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  console.log("Email:", email);
                 }}
               />
             </Form.Item>
 
             <Form.Item
               name="password"
+              autoComplete="current-password"
               rules={[
                 {
                   required: true,
@@ -295,20 +296,22 @@ function Connexion() {
                     {fileList.length >= 1 ? null : uploadButton}
                   </Upload>
                 </ImgCrop>
-                {previewImage && (
-                  <Image
-                    wrapperStyle={{ display: "none" }}
-                    preview={{
-                      movable: true,
-                      toolbar: false,
-                      visible: previewOpen,
-                      onVisibleChange: (visible) => setPreviewOpen(visible),
-                      afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                    }}
-                    src={previewImage}
-                  />
-                )}
               </Form.Item>
+            )}
+
+            {/* Composant Image séparé pour la prévisualisation */}
+            {!isLogin && previewImage && (
+              <Image
+                wrapperStyle={{ display: "none" }}
+                preview={{
+                  movable: true,
+                  toolbar: false,
+                  visible: previewOpen,
+                  onVisibleChange: (visible) => setPreviewOpen(visible),
+                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                }}
+                src={previewImage}
+              />
             )}
 
             {/* {isLogin && (

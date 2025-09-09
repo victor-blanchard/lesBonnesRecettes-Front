@@ -44,8 +44,6 @@ function Home() {
     );
     setTimeout(() => {
       setIsLoading(false);
-
-      console.log("1 seconde plus tard...");
     }, 300);
     if (response.ok) {
       const data = await response.json();
@@ -155,7 +153,7 @@ function Home() {
           {isLoading ? (
             <div className={styles.loadingContainer}>
               {Array.from({ length: 9 }).map((_, index) => (
-                <div className={styles.card}>
+                <div key={index} className={styles.card}>
                   <div style={{ padding: "1rem" }}>
                     <Skeleton active paragraph={{ rows: 2 }} />
                   </div>
