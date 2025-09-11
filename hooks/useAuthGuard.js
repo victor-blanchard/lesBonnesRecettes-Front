@@ -11,7 +11,6 @@ export const useAuthGuard = () => {
     if (!userIsConnected) {
       router.push("/connexion");
     }
-    // console.log("userIsConnecteeed:", userIsConnected);
   }, [userIsConnected, router]);
 
   return { userIsConnected };

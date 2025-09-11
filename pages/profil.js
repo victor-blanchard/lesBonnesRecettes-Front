@@ -137,7 +137,14 @@ function Profil() {
       className={styles.recipeCard}
       onClick={() => router.push(`/recette/${recipe._id}`)}
     >
-      <img src={recipe.picture} alt={recipe.title} className={styles.recipeImage} />
+      <img
+        src={
+          recipe.picture ||
+          "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
+        }
+        alt={recipe.title}
+        className={styles.recipeImage}
+      />
       <div className={styles.recipeInfo}>
         <h3 className={styles.recipeTitle}>{recipe.name}</h3>
         <div className={styles.recipeTime}>
@@ -185,7 +192,7 @@ function Profil() {
           <div className={styles.statsSection}>
             <div className={styles.statItem}>
               <div className={styles.statNumber}>{userRecipes?.length}</div>
-              <div className={styles.statLabel}>Recette</div>
+              <div className={styles.statLabel}>Recette{userRecipes?.length > 1 ? "s" : ""}</div>
             </div>
             {/* <div className={styles.statItem}>
               <div className={styles.statNumber}>{profileData.likedRecipes.length}</div>
@@ -193,7 +200,7 @@ function Profil() {
             </div> */}
             <div className={styles.statItem}>
               <div className={styles.statNumber}>{userDrafts?.length}</div>
-              <div className={styles.statLabel}>Brouillons</div>
+              <div className={styles.statLabel}>Brouillon{userDrafts?.length > 1 ? "s" : ""}</div>
             </div>
           </div>
 
@@ -213,7 +220,7 @@ function Profil() {
                 type="primary"
                 size="large"
                 style={{ marginTop: "1rem" }}
-                onClick={() => router.push("/creer-recette")}
+                onClick={() => router.push("/recette/create")}
               >
                 Créer une recette
               </Button>

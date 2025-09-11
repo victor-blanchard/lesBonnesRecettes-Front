@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import styles from "../styles/NewRecipe.module.css";
+import styles from "../../styles/NewRecipe.module.css";
 import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
 import ImgCrop from "antd-img-crop";
 import {
@@ -17,11 +17,11 @@ const getBase64 = (file) =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
-import Header from "../components/Header";
-import { useAuthGuard } from "../hooks/useAuthGuard";
+import Header from "../../components/Header";
+import { useAuthGuard } from "../../hooks/useAuthGuard";
 import { useSelector } from "react-redux";
 
-function CreerRecette() {
+function CreateRecipe() {
   const { userIsConnected } = useAuthGuard();
   const userId = useSelector((state) => state.users.value.userId);
   const router = useRouter();
@@ -444,4 +444,4 @@ function CreerRecette() {
   );
 }
 
-export default CreerRecette;
+export default CreateRecipe;

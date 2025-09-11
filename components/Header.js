@@ -30,7 +30,7 @@ function Header({ showBackButton = false, onBackClick }) {
   const items = [
     {
       label: (
-        <a href="/creer-recette" rel="noopener noreferrer">
+        <a href="/recette/create" rel="noopener noreferrer">
           Ajouter une recette
         </a>
       ),

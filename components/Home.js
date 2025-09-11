@@ -176,7 +176,14 @@ function Home() {
                         className={styles.card}
                         onClick={() => router.push(`/recette/${recipe._id}`)}
                       >
-                        <img className={styles.cardImage} alt="recipe" src={recipe.picture} />
+                        <img
+                          className={styles.cardImage}
+                          alt="recipe"
+                          src={
+                            recipe.picture ||
+                            "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
+                          }
+                        />
                         <div className={styles.cardData}>
                           <p className={styles.cardName}>{recipe.name}</p>
                           <p className={styles.cardLength}>

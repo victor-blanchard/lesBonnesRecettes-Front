@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 import styles from "../../styles/Recette.module.css";
 import { Button, Avatar, Divider, message, Skeleton, Modal, Dropdown, Space } from "antd";
 import {
@@ -14,8 +15,11 @@ import {
   StarOutlined,
   BulbOutlined,
   MenuOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import Header from "../../components/Header";
+import { formatDate } from "../../../utils/formatDate";
 
 function Recette() {
   const router = useRouter();
@@ -24,31 +28,7 @@ function Recette() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [picture, setPicture] = useState(null);
-
-  // Formatage de la date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const months = [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre",
-    ];
-
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-
-    return `publié le ${day} ${month} ${year}`;
-  };
+  const userId = useSelector((state) => state.users.value.userId);
 
   const handleDataFetch = async (id) => {
     try {
@@ -63,11 +43,11 @@ function Recette() {
         setRecipe(data.recipe);
         setIsLoading(false);
       } else {
-        throw new Error("Failed to fetch recipe");
+        throw new Error("Recette introuvable");
       }
     } catch (error) {
-      message.error("Failed to fetch recette");
-      // router.push("/");
+      message.error("Recette introuvable");
+      router.push("/");
     }
   };
 
@@ -75,6 +55,7 @@ function Recette() {
     if (router.query.id) {
       const id = router.query.id;
       console.log("recipeId", id);
+      setRecipeId(id);
       handleDataFetch(id);
     }
   }, [router.query.id]);
@@ -82,6 +63,25 @@ function Recette() {
   const handleFavorite = () => {
     setIsFavorite(!isFavorite);
     message.success(isFavorite ? "Retiré des favoris" : "Ajouté aux favoris");
+  };
+  const handleEdit = () => {
+    router.push(`/recette/edit/${recipeId}`);
+  };
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${recipeId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (response.ok) {
+        message.success("Recette supprimée avec succès");
+        router.push("/profil");
+      } else {
+        message.error("Impossible de supprimer la recette");
+      }
+    } catch (error) {
+      message.error("Impossible de supprimer la recette");
+    }
   };
 
   const handleShare = () => {
@@ -121,10 +121,15 @@ function Recette() {
         {/* Container principal de la recette */}
         <div className={styles.recipeContainer}>
           <div className={styles.recipeHero}>
+            {recipe.isDraft && (
+              <div className={styles.draftBadge}>
+                <span>Brouillon</span>
+              </div>
+            )}
             <img
               src={
                 recipe.picture ||
-                "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757090943/recipes/kf2n6h2mhgddruhtqxzv.png"
+                "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
               }
               alt={recipe.name}
               className={styles.recipeImage}
@@ -165,15 +170,13 @@ function Recette() {
 
             {/* Actions */}
             <div className={styles.actionsSection}>
-              {/* <Button
+              <Button
                 icon={isFavorite ? <HeartFilled /> : <HeartOutlined />}
                 className={`${styles.actionButton} ${styles.favoriteButton} ${
                   isFavorite ? styles.active : ""
                 }`}
                 onClick={handleFavorite}
-              >
-                {isFavorite ? "Favori" : "Favoris"}
-              </Button> */}
+              ></Button>
               <Button
                 icon={<ShareAltOutlined />}
                 className={`${styles.actionButton} ${styles.shareButton}`}
@@ -228,6 +231,26 @@ function Recette() {
                 <h4>{recipe.author?.firstName}</h4>
                 <p>{formatDate(recipe.createdAt)}</p>
               </div>
+            </div>
+            <div className={styles.actionsSection}>
+              {recipe.author?._id === userId && (
+                <Button
+                  icon={<EditOutlined />}
+                  className={`${styles.actionButton} ${styles.editButton}`}
+                  onClick={handleEdit}
+                >
+                  Modifier la recette
+                </Button>
+              )}
+              {recipe.author?._id === userId && (
+                <Button
+                  icon={<DeleteOutlined />}
+                  className={`${styles.actionButton} ${styles.deleteButton}`}
+                  onClick={handleDelete}
+                >
+                  Supprimer la recette
+                </Button>
+              )}
             </div>
           </div>
         </div>

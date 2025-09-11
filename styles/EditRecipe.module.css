@@ -1,0 +1,197 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
+  width: 90%;
+}
+
+.topHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  width: 100%;
+  padding-top: 3rem;
+  /* background-color: #b22929; */
+}
+
+.backButton {
+  border: 0;
+  color: rgb(62, 62, 62);
+  font-size: 180%;
+  background-color: #f5f5f5;
+  border-radius: 100%;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #e8e8e8;
+  transform: scale(1.05);
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 700px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.formCol {
+  flex: 1;
+  min-width: 220px;
+}
+
+.ingredientList,
+.stepList {
+  margin-bottom: 1.5rem;
+}
+
+.ingredientItem,
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ingredientInput,
+.stepInput,
+.titleInput,
+.descriptionInput {
+  flex: 1;
+  box-shadow: none !important;
+  font-size: 1rem;
+  background: transparent !important;
+}
+
+.timeContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.timeRadio {
+  width: 100%;
+  color: #ff7900;
+}
+
+.timeRadioButton {
+  font-weight: 500;
+}
+
+.ingredientSelect {
+  flex: 1;
+  box-shadow: none !important;
+  /* font-size: 16px; */
+  background: transparent !important;
+}
+.addButton {
+  margin-top: 0.5rem;
+  background-color: #ff7900;
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.addButton:hover {
+  background-color: #ff7900 !important;
+  color: white !important;
+}
+
+.removeButton {
+  color: #ff4d4f;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.removeButton:hover {
+  color: #d9363e;
+}
+
+.upload {
+  margin-bottom: 1.5rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: flex-end;
+}
+
+.saveButton {
+  background-color: #28c00e;
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 10px 24px;
+  transition: all 0.3s ease;
+}
+
+.saveButton:hover {
+  background-color: #73d13d !important;
+  color: white !important;
+}
+
+.draftButton {
+  background-color: #fffbe6;
+  color: #d48806;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border: 1px solid #ffe58f;
+  transition: all 0.3s ease;
+}
+
+.draftButton:hover {
+  background-color: #ffe58f !important;
+  color: #ad6800 !important;
+}
+
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 1.5rem 0.5rem;
+  }
+  .actionButtons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
