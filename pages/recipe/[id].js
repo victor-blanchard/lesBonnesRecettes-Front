@@ -20,8 +20,10 @@ import {
 } from "@ant-design/icons";
 import Header from "../../components/Header";
 import { formatDate } from "../../../utils/formatDate";
+import { useDispatch } from "react-redux";
+import { setLikedRecipes } from "../../reducers/users";
 
-function Recette() {
+function Recipe() {
   const router = useRouter();
   const [recipeId, setRecipeId] = useState(null);
   const [recipe, setRecipe] = useState(null);
@@ -29,7 +31,8 @@ function Recette() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [picture, setPicture] = useState(null);
   const userId = useSelector((state) => state.users.value.userId);
-
+  const userLikedRecipes = useSelector((state) => state.users.value.likedRecipes);
+  const dispatch = useDispatch();
   const handleDataFetch = async (id) => {
     try {
       console.log("id", id);
@@ -53,19 +56,56 @@ function Recette() {
 
   useEffect(() => {
     if (router.query.id) {
-      const id = router.query.id;
-      console.log("recipeId", id);
-      setRecipeId(id);
-      handleDataFetch(id);
+      const recipeId = router.query.id;
+      console.log("recipeId", recipeId);
+      setRecipeId(recipeId);
+      handleDataFetch(recipeId);
+      if (userLikedRecipes.includes(recipeId)) {
+        setIsFavorite(true);
+      }
     }
-  }, [router.query.id]);
+  }, [router.query.id, userLikedRecipes, userId]);
 
-  const handleFavorite = () => {
+  const handleFavorite = async () => {
+    console.log("recipeId", recipeId);
+    if (!userId) {
+      message.error("Vous devez être connecté pour ajouter une recette à vos favoris");
+      router.push("/connexion");
+      return;
+    }
+    if (isFavorite) {
+      dispatch(setLikedRecipes(userLikedRecipes.filter((id) => id !== recipeId)));
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/likeRecipe`, {
+        method: "POST",
+        body: JSON.stringify(recipeId),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        message.error("Impossible de retirer la recette des favoris");
+        return;
+      }
+    } else {
+      if (userLikedRecipes.length === 0) {
+        dispatch(setLikedRecipes([recipeId]));
+      } else {
+        dispatch(setLikedRecipes([...userLikedRecipes, recipeId]));
+      }
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/likeRecipe`, {
+        method: "POST",
+        body: JSON.stringify(recipeId),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        message.error("Impossible d'ajouter la recette aux favoris");
+        return;
+      }
+    }
     setIsFavorite(!isFavorite);
     message.success(isFavorite ? "Retiré des favoris" : "Ajouté aux favoris");
   };
   const handleEdit = () => {
-    router.push(`/recette/edit/${recipeId}`);
+    router.push(`/recipe/edit/${recipeId}`);
   };
   const handleDelete = async () => {
     try {
@@ -239,7 +279,7 @@ function Recette() {
                   className={`${styles.actionButton} ${styles.editButton}`}
                   onClick={handleEdit}
                 >
-                  Modifier la recette
+                  {recipe.isDraft ? "Modifier le brouillon" : "Modifier la recette"}
                 </Button>
               )}
               {recipe.author?._id === userId && (
@@ -248,7 +288,7 @@ function Recette() {
                   className={`${styles.actionButton} ${styles.deleteButton}`}
                   onClick={handleDelete}
                 >
-                  Supprimer la recette
+                  {recipe.isDraft ? "Supprimer le brouillon" : "Supprimer la recette"}
                 </Button>
               )}
             </div>
@@ -259,4 +299,4 @@ function Recette() {
   );
 }
 
-export default Recette;
+export default Recipe;

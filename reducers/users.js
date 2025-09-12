@@ -4,6 +4,7 @@ const initialState = {
   value: {
     userIsConnected: false,
     userId: null,
+    likedRecipes: [],
   },
 };
 
@@ -24,9 +25,13 @@ export const usersSlice = createSlice({
     setUserId: (state, action) => {
       state.value.userId = action.payload;
     },
+    setLikedRecipes: (state, action) => {
+      state.value.likedRecipes = action.payload;
+    },
   },
 });
 
-export const { loginUser, logoutUser, userIsConnected, setUserId } = usersSlice.actions;
+export const { loginUser, logoutUser, userIsConnected, setUserId, setLikedRecipes } =
+  usersSlice.actions;
 
 export default usersSlice.reducer;

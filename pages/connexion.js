@@ -21,7 +21,7 @@ import Header from "../components/Header";
 import styles from "../styles/Connexion.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { userIsConnected, setUserId } from "../reducers/users";
+import { userIsConnected, setUserId, setLikedRecipes } from "../reducers/users";
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/signUp`, {
@@ -86,6 +86,9 @@ function Connexion() {
             message.success("Connexion réussie !");
             dispatch(userIsConnected(true));
             dispatch(setUserId(data._id));
+            data.likedRecipes
+              ? dispatch(setLikedRecipes(data.likedRecipes))
+              : dispatch(setLikedRecipes([]));
             router.push("/");
           } else {
             if (response.status === 401) {
@@ -121,6 +124,7 @@ function Connexion() {
           message.success("Inscription réussie !");
           dispatch(userIsConnected(true));
           dispatch(setUserId(data._id));
+          dispatch(setLikedRecipes([]));
           router.push("/");
         } else {
           if (response.status === 400) {

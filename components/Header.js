@@ -4,7 +4,7 @@ import { ArrowLeftOutlined, MenuOutlined } from "@ant-design/icons";
 import styles from "../styles/Header.module.css";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userIsConnected, setUserId } from "../reducers/users";
+import { userIsConnected, setUserId, setLikedRecipes } from "../reducers/users";
 import { UserOutlined } from "@ant-design/icons";
 
 function Header({ showBackButton = false, onBackClick }) {
@@ -23,6 +23,7 @@ function Header({ showBackButton = false, onBackClick }) {
     if (response.ok) {
       dispatch(userIsConnected(false));
       dispatch(setUserId(null));
+      dispatch(setLikedRecipes([]));
       message.success("Déconnexion réussie !");
     }
   };
@@ -30,7 +31,7 @@ function Header({ showBackButton = false, onBackClick }) {
   const items = [
     {
       label: (
-        <a href="/recette/create" rel="noopener noreferrer">
+        <a href="/recipe/create" rel="noopener noreferrer">
           Ajouter une recette
         </a>
       ),

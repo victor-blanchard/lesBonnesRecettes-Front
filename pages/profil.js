@@ -135,7 +135,7 @@ function Profil() {
     <div
       key={recipe._id}
       className={styles.recipeCard}
-      onClick={() => router.push(`/recette/${recipe._id}`)}
+      onClick={() => router.push(`/recipe/${recipe._id}`)}
     >
       <img
         src={
@@ -220,7 +220,7 @@ function Profil() {
                 type="primary"
                 size="large"
                 style={{ marginTop: "1rem" }}
-                onClick={() => router.push("/recette/create")}
+                onClick={() => router.push("/recipe/create")}
               >
                 Créer une recette
               </Button>

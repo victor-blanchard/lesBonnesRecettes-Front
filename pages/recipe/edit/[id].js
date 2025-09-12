@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import styles from "../../styles/NewRecipe.module.css";
+import styles from "../../../styles/EditRecipe.module.css";
 import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
 import ImgCrop from "antd-img-crop";
 import {
@@ -17,14 +17,15 @@ const getBase64 = (file) =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
-import Header from "../../components/Header";
-import { useAuthGuard } from "../../hooks/useAuthGuard";
+import Header from "../../../components/Header";
+import { useAuthGuard } from "../../../hooks/useAuthGuard";
 import { useSelector } from "react-redux";
 
-function CreateRecipe() {
+function EditRecipe() {
   const { userIsConnected } = useAuthGuard();
   const userId = useSelector((state) => state.users.value.userId);
   const router = useRouter();
+  const { id } = router.query;
   const [form] = Form.useForm();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -34,6 +35,10 @@ function CreateRecipe() {
   const [steps, setSteps] = useState([""]);
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [recipeLoading, setRecipeLoading] = useState(true);
+  const [originalImageUrl, setOriginalImageUrl] = useState(null);
+  const [isDraft, setIsDraft] = useState();
+
   // Variable qui contient toutes les données du formulaire de la recette
   const donneesRecette = {
     author: userId,
@@ -45,6 +50,79 @@ function CreateRecipe() {
     steps: steps,
     imageUrl: imageUrl,
   };
+
+  // Fonction pour récupérer les données de la recette
+  const fetchRecipe = async () => {
+    if (!id) return;
+
+    try {
+      setRecipeLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.result && data.recipe) {
+          const recipe = data.recipe;
+
+          // Préremplir les champs avec les données de la recette
+          setName(recipe.name);
+          setIsDraft(recipe.isDraft);
+          setDescription(recipe.description);
+          setCategory(recipe.category);
+          setDuration(recipe.duration);
+          setIngredients(
+            recipe.ingredients && recipe.ingredients.length > 0
+              ? recipe.ingredients.map((ing) => ({
+                  ...ing,
+                  quantity: String(ing.quantity || ""), // Convertir en chaîne
+                }))
+              : [{ name: "", quantity: "", unit: "gr" }]
+          );
+          setSteps(recipe.steps && recipe.steps.length > 0 ? recipe.steps : [""]);
+
+          if (recipe.picture) {
+            setOriginalImageUrl(recipe.picture);
+            setImageUrl(recipe.picture);
+            // Préremplir le fileList pour l'upload
+            setFileList([
+              {
+                uid: "-1",
+                name: "image.png",
+                status: "done",
+                url: recipe.picture,
+              },
+            ]);
+          }
+
+          // Mettre à jour le formulaire Ant Design
+          form.setFieldsValue({
+            title: recipe.name,
+            description: recipe.description,
+          });
+        } else {
+          message.error("Recette non trouvée");
+          router.push("/");
+        }
+      } else {
+        message.error("Erreur lors du chargement de la recette");
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Erreur lors du fetch de la recette:", error);
+      message.error("Erreur lors du chargement de la recette");
+      router.push("/");
+    } finally {
+      setRecipeLoading(false);
+    }
+  };
+
+  // Charger les données de la recette au montage du composant
+  useEffect(() => {
+    fetchRecipe();
+  }, [id]);
 
   // Gestion des ingrédients dynamiques
   const handleIngredientChange = (index, field, value) => {
@@ -92,6 +170,9 @@ function CreateRecipe() {
         setImageUrl(e.target.result);
       };
       reader.readAsDataURL(file);
+    } else if (newFileList.length === 0) {
+      // Si l'image a été supprimée
+      setImageUrl(null);
     }
   };
   const uploadButton = (
@@ -166,7 +247,6 @@ function CreateRecipe() {
       }
 
       const formData = new FormData();
-      formData.append("author", userId);
       formData.append("name", name);
       formData.append("description", description);
       formData.append("steps", JSON.stringify(steps));
@@ -178,47 +258,73 @@ function CreateRecipe() {
       if (fileList[0]?.originFileObj) {
         formData.append("image", fileList[0].originFileObj);
       }
-      // Si toutes les validations passent, envoyer la requête
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/add`, {
-        method: "POST",
+
+      // Envoyer la requête PUT pour modifier la recette
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${id}`, {
+        method: "PUT",
         credentials: "include",
         body: formData,
       });
 
       console.log(donneesRecette);
-      // Simuler l'enregistrement
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (response.ok) {
-        message.success(isDraft ? "Brouillon enregistré !" : "Recette enregistrée !");
+        message.success(isDraft ? "Brouillon modifié !" : "Recette modifiée !");
         setLoading(false);
+        router.push(`/recipe/${id}`);
       } else {
-        message.error("Erreur lors de l'enregistrement de la recette");
+        const errorData = await response.json();
+        message.error(errorData.error || "Erreur lors de la modification de la recette");
         setLoading(false);
       }
-      router.push("/");
     } catch (err) {
       if (err.errorFields) {
         // Erreur de validation Ant Design
         message.error("Veuillez remplir tous les champs obligatoires.");
       } else {
-        message.error("Erreur lors de l'enregistrement de la recette");
+        message.error("Erreur lors de la modification de la recette");
       }
       setLoading(false);
     }
   };
 
   const { Option } = Select;
+
+  // Afficher un skeleton pendant le chargement
+  if (recipeLoading) {
+    return (
+      <div className={styles.main}>
+        <div className={styles.pageContainer}>
+          <Header showBackButton={true} />
+          <div className={styles.topHeader}>
+            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Modifier la Recette</h1>
+            <div style={{ width: 48 }}></div>
+          </div>
+          <div className={styles.formContainer}>
+            <Skeleton active paragraph={{ rows: 8 }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.main}>
       <div className={styles.pageContainer}>
         <Header showBackButton={true} />
 
         <div className={styles.topHeader}>
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Nouvelle Recette</h1>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>
+            {isDraft ? "Modifier le brouillon" : "Modifier la Recette"}
+          </h1>
           <div style={{ width: 48 }}></div>
         </div>
         <div className={styles.formContainer}>
-          <Form form={form} layout="vertical" initialValues={{ title: "", description: "" }}>
+          <Form
+            form={form}
+            layout="vertical"
+            initialValues={{ title: name, description: description }}
+          >
             <Form.Item
               label="Titre de la recette"
               name="title"
@@ -227,6 +333,7 @@ function CreateRecipe() {
               <Input
                 placeholder="Ex : Gâteau au chocolat"
                 className={styles.titleInput}
+                value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </Form.Item>
@@ -239,6 +346,7 @@ function CreateRecipe() {
                 rows={3}
                 placeholder="Décrivez brièvement la recette..."
                 className={styles.descriptionInput}
+                value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Form.Item>
@@ -270,12 +378,12 @@ function CreateRecipe() {
               />
             )}
 
-            <div className={styles.sectionTitle}>Temps de préparation</div>
+            <div className={styles.sectionTitle}>Catégorie</div>
             <div className={styles.timeContainer}>
-              <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
+              <Radio.Group buttonStyle="solid" className={styles.timeRadio} value={category}>
                 <Radio.Button
                   className={styles.timeRadioButton}
-                  value="Main course"
+                  value="Plat"
                   onClick={() => setCategory("Plat")}
                 >
                   Plat
@@ -305,7 +413,7 @@ function CreateRecipe() {
             </div>
             <div className={styles.sectionTitle}>Temps de préparation</div>
             <div className={styles.timeContainer}>
-              <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
+              <Radio.Group buttonStyle="solid" className={styles.timeRadio} value={duration}>
                 <Radio.Button
                   className={styles.timeRadioButton}
                   value="Rapide"
@@ -364,7 +472,7 @@ function CreateRecipe() {
 
                   <Select
                     className={styles.ingredientSelect}
-                    defaultValue="gr"
+                    value={ingredient.unit}
                     style={{ width: 100 }}
                     onChange={(value) => handleIngredientChange(idx, "unit", value)}
                     options={[
@@ -426,7 +534,7 @@ function CreateRecipe() {
                 onClick={() => handleSave(true)}
                 loading={loading}
               >
-                Enregistrer en brouillon
+                Sauvegarder le brouillon
               </Button>
               <Button
                 type="primary"
@@ -444,4 +552,4 @@ function CreateRecipe() {
   );
 }
 
-export default CreateRecipe;
+export default EditRecipe;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import styles from "../../../styles/EditRecipe.module.css";
+import styles from "../../styles/NewRecipe.module.css";
 import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
 import ImgCrop from "antd-img-crop";
 import {
@@ -17,11 +17,11 @@ const getBase64 = (file) =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
-import Header from "../../../components/Header";
-import { useAuthGuard } from "../../../hooks/useAuthGuard";
+import Header from "../../components/Header";
+import { useAuthGuard } from "../../hooks/useAuthGuard";
 import { useSelector } from "react-redux";
 
-function EditRecipe() {
+function CreateRecipe() {
   const { userIsConnected } = useAuthGuard();
   const userId = useSelector((state) => state.users.value.userId);
   const router = useRouter();
@@ -189,13 +189,14 @@ function EditRecipe() {
       // Simuler l'enregistrement
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (response.ok) {
+        const recipeData = await response.json();
         message.success(isDraft ? "Brouillon enregistré !" : "Recette enregistrée !");
         setLoading(false);
+        router.push(`/recipe/${recipeData.recipeCreated._id}`);
       } else {
         message.error("Erreur lors de l'enregistrement de la recette");
         setLoading(false);
       }
-      router.push("/");
     } catch (err) {
       if (err.errorFields) {
         // Erreur de validation Ant Design
@@ -214,7 +215,7 @@ function EditRecipe() {
         <Header showBackButton={true} />
 
         <div className={styles.topHeader}>
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Modifier la Recette</h1>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Nouvelle Recette</h1>
           <div style={{ width: 48 }}></div>
         </div>
         <div className={styles.formContainer}>
@@ -444,4 +445,4 @@ function EditRecipe() {
   );
 }
 
-export default EditRecipe;
+export default CreateRecipe;

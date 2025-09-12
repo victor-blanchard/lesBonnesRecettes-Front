@@ -174,7 +174,7 @@ function Home() {
                       <div
                         key={recipe._id}
                         className={styles.card}
-                        onClick={() => router.push(`/recette/${recipe._id}`)}
+                        onClick={() => router.push(`/recipe/${recipe._id}`)}
                       >
                         <img
                           className={styles.cardImage}
