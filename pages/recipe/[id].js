@@ -22,6 +22,7 @@ import Header from "../../components/Header";
 import { formatDate } from "../../../utils/formatDate";
 import { useDispatch } from "react-redux";
 import { setLikedRecipes } from "../../reducers/users";
+import { toggleLike } from "../../utils/toggleLike";
 
 function Recipe() {
   const router = useRouter();
@@ -62,47 +63,22 @@ function Recipe() {
       handleDataFetch(recipeId);
       if (userLikedRecipes.includes(recipeId)) {
         setIsFavorite(true);
+      } else {
+        setIsFavorite(false);
       }
     }
   }, [router.query.id, userLikedRecipes, userId]);
 
   const handleFavorite = async () => {
-    console.log("recipeId", recipeId);
-    if (!userId) {
-      message.error("Vous devez être connecté pour ajouter une recette à vos favoris");
-      router.push("/connexion");
-      return;
-    }
-    if (isFavorite) {
-      dispatch(setLikedRecipes(userLikedRecipes.filter((id) => id !== recipeId)));
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/likeRecipe`, {
-        method: "POST",
-        body: JSON.stringify(recipeId),
-        credentials: "include",
-      });
-      if (!response.ok) {
-        message.error("Impossible de retirer la recette des favoris");
-        return;
-      }
-    } else {
-      if (userLikedRecipes.length === 0) {
-        dispatch(setLikedRecipes([recipeId]));
-      } else {
-        dispatch(setLikedRecipes([...userLikedRecipes, recipeId]));
-      }
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/likeRecipe`, {
-        method: "POST",
-        body: JSON.stringify(recipeId),
-        credentials: "include",
-      });
-      if (!response.ok) {
-        message.error("Impossible d'ajouter la recette aux favoris");
-        return;
-      }
-    }
-    setIsFavorite(!isFavorite);
-    message.success(isFavorite ? "Retiré des favoris" : "Ajouté aux favoris");
+    const newState = await toggleLike({
+      recipeId,
+      userId,
+      userLikedRecipes,
+      dispatch,
+      setLikedRecipes,
+      router,
+    });
+    setIsFavorite(newState);
   };
   const handleEdit = () => {
     router.push(`/recipe/edit/${recipeId}`);
@@ -155,7 +131,7 @@ function Recipe() {
   return (
     <div className={styles.main}>
       {/* Header avec bouton retour */}
-      <Header showBackButton={true} />
+      <Header showBackButton={false} />
 
       <div className={styles.pageContainer}>
         {/* Container principal de la recette */}
@@ -173,6 +149,24 @@ function Recipe() {
               }
               alt={recipe.name}
               className={styles.recipeImage}
+            />
+            {isFavorite ? (
+              <HeartFilled
+                className={`${styles.heartButton} ${styles.heartActive}`}
+                aria-label="Retirer des favoris"
+                onClick={handleFavorite}
+              />
+            ) : (
+              <HeartOutlined
+                className={styles.heartButton}
+                aria-label="Ajouter aux favoris"
+                onClick={handleFavorite}
+              />
+            )}
+            <ShareAltOutlined
+              className={styles.shareButton}
+              aria-label="Partager la recette"
+              onClick={handleShare}
             />
             <div className={styles.recipeOverlay}>
               <h1 className={styles.recipeTitle}>{recipe.name}</h1>
@@ -207,24 +201,6 @@ function Recipe() {
                 <div className={styles.statLabel}>Difficulté</div>
               </div>
             </div> */}
-
-            {/* Actions */}
-            <div className={styles.actionsSection}>
-              <Button
-                icon={isFavorite ? <HeartFilled /> : <HeartOutlined />}
-                className={`${styles.actionButton} ${styles.favoriteButton} ${
-                  isFavorite ? styles.active : ""
-                }`}
-                onClick={handleFavorite}
-              ></Button>
-              <Button
-                icon={<ShareAltOutlined />}
-                className={`${styles.actionButton} ${styles.shareButton}`}
-                onClick={handleShare}
-              >
-                Partager
-              </Button>
-            </div>
 
             {/* Ingrédients */}
             <div className={styles.ingredientsSection}>
@@ -279,7 +255,7 @@ function Recipe() {
                   className={`${styles.actionButton} ${styles.editButton}`}
                   onClick={handleEdit}
                 >
-                  {recipe.isDraft ? "Modifier le brouillon" : "Modifier la recette"}
+                  {recipe.isDraft ? "Modifier" : "Modifier"}
                 </Button>
               )}
               {recipe.author?._id === userId && (
@@ -288,7 +264,7 @@ function Recipe() {
                   className={`${styles.actionButton} ${styles.deleteButton}`}
                   onClick={handleDelete}
                 >
-                  {recipe.isDraft ? "Supprimer le brouillon" : "Supprimer la recette"}
+                  {recipe.isDraft ? "Supprimer" : "Supprimer"}
                 </Button>
               )}
             </div>

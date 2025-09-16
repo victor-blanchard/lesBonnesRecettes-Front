@@ -39,11 +39,19 @@ function Header({ showBackButton = false, onBackClick }) {
     },
     {
       label: (
+        <a href="/likes" rel="noopener noreferrer">
+          Mes favoris
+        </a>
+      ),
+      key: "1",
+    },
+    {
+      label: (
         <a href="/profil" rel="noopener noreferrer">
           Mon profil
         </a>
       ),
-      key: "1",
+      key: "2",
     },
     {
       type: "divider",

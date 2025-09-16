@@ -1,4 +1,8 @@
 import styles from "../styles/Home.module.css";
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { setLikedRecipes } from "../reducers/users";
+import { toggleLike } from "../utils/toggleLike";
 import {
   Skeleton,
   Card,
@@ -23,13 +27,14 @@ import {
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Header from "./Header";
-import { useDispatch, useSelector } from "react-redux";
 import { setRecipesToDisplay } from "../reducers/recipes";
 
 function Home() {
   const router = useRouter();
   const dispatch = useDispatch();
   const recipesToDisplay = useSelector((state) => state.recipes?.recipesToDisplay?.recipes || []);
+  const userId = useSelector((state) => state.users.value.userId);
+  const userLikedRecipes = useSelector((state) => state.users.value.likedRecipes);
   const [isLoading, setIsLoading] = useState(true);
   const [categoryToDisplay, setCategoryToDisplay] = useState("");
   const [searchToDisplay, setSearchToDisplay] = useState("");
@@ -152,7 +157,7 @@ function Home() {
           </div>
           {isLoading ? (
             <div className={styles.loadingContainer}>
-              {Array.from({ length: 9 }).map((_, index) => (
+              {Array.from({ length: 6 }).map((_, index) => (
                 <div key={index} className={styles.card}>
                   <div style={{ padding: "1rem" }}>
                     <Skeleton active paragraph={{ rows: 2 }} />
@@ -170,6 +175,7 @@ function Home() {
               <div className={styles.recipesGrid}>
                 {Array.isArray(recipesToDisplay) &&
                   recipesToDisplay.map((recipe) => {
+                    const isFavorite = userLikedRecipes.includes(recipe._id);
                     return (
                       <div
                         key={recipe._id}
@@ -184,6 +190,25 @@ function Home() {
                             "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
                           }
                         />
+                        <button
+                          className={`${styles.heartButton} ${
+                            isFavorite ? styles.heartActive : ""
+                          }`}
+                          aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            const newState = await toggleLike({
+                              recipeId: recipe._id,
+                              userId,
+                              userLikedRecipes,
+                              dispatch,
+                              setLikedRecipes,
+                              router,
+                            });
+                          }}
+                        >
+                          {isFavorite ? <HeartFilled /> : <HeartOutlined />}
+                        </button>
                         <div className={styles.cardData}>
                           <p className={styles.cardName}>{recipe.name}</p>
                           <p className={styles.cardLength}>

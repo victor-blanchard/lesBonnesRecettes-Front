@@ -269,6 +269,40 @@
   word-spacing: -0.1em;
 }
 
+.heartButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  color: #999;
+}
+
+.heartButton:hover {
+  color: #ff4d4f;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.heartActive {
+  color: #ff4d4f;
+}
+
+.shareButton {
+  position: absolute;
+  top: 4rem;
+  right: 1rem;
+  z-index: 10;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  color: #188fff;
+}
 .actionsSection {
   display: flex;
   gap: 1rem;
@@ -284,35 +318,9 @@
   font-weight: 500;
   transition: all 0.3s ease;
 }
-
-.favoriteButton {
-  background-color: #fff;
-  border-color: #ff4d4f;
-  color: #ff4d4f;
-}
-
-.favoriteButton:hover {
-  background-color: #ff4d4f !important;
-  border-color: #ff4d4f !important;
-  color: white !important;
-}
-
-.favoriteButton.active {
-  background-color: #ff4d4f;
-  border-color: #ff4d4f;
-  color: white;
-}
-
-.shareButton {
-  background-color: #fff;
-  border-color: #1890ff;
-  color: #1890ff;
-}
-
 .shareButton:hover {
-  background-color: #1890ff !important;
-  border-color: #1890ff !important;
-  color: white !important;
+  color: white;
+  background: #1890ff;
 }
 
 .editButton {
@@ -370,7 +378,7 @@
   font-size: 0.9rem;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .recipeTitle {
     font-size: 2rem;
   }
@@ -403,4 +411,4 @@
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
   }
-}
+} */

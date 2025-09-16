@@ -1,7 +1,19 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/Profil.module.css";
-import { Button, Avatar, Divider, Switch, Modal, Form, Input, message, Skeleton } from "antd";
+import {
+  Button,
+  Avatar,
+  Divider,
+  Switch,
+  Modal,
+  Form,
+  Input,
+  message,
+  Skeleton,
+  Upload,
+} from "antd";
+import ImgCrop from "antd-img-crop";
 import {
   ArrowLeftOutlined,
   EditOutlined,
@@ -14,6 +26,7 @@ import {
   PlusOutlined,
   FileOutlined,
   DeleteOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import Header from "../components/Header";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -23,6 +36,14 @@ import { userIsConnected, setUserId } from "../reducers/users";
 import { useEffect } from "react";
 
 const { TextArea } = Input;
+
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 function Profil() {
   const dispatch = useDispatch();
@@ -36,6 +57,10 @@ function Profil() {
   const [form] = Form.useForm();
   const [profileData, setProfileData] = useState({});
   const [userDrafts, setUserDrafts] = useState([]);
+  const [fileList, setFileList] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,34 +91,71 @@ function Profil() {
     fetchData();
   }, [userId]);
 
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+
+  const handleChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
+
   const handleEditProfile = () => {
     form.setFieldsValue({
       firstName: profileData.firstName,
       lastName: profileData.lastName,
       email: profileData.email,
     });
+    setFileList([]);
     setIsEditModalVisible(true);
   };
 
   const handleSaveProfile = async (values) => {
-    setIsLoading(true);
+    setUploading(true);
     try {
-      // Simulation d'une requête API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const formData = new FormData();
 
-      setProfileData((prev) => ({
-        ...prev,
-        name: values.name,
-        email: values.email,
-        bio: values.bio,
-      }));
+      // Ajouter les champs texte
+      formData.append("firstName", values.firstName);
+      formData.append("lastName", values.lastName);
+      formData.append("email", values.email);
 
-      message.success("Profil mis à jour avec succès !");
-      setIsEditModalVisible(false);
+      // Ajouter la photo de profil si elle existe
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        formData.append("profilePicture", fileList[0].originFileObj);
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/update`, {
+        method: "PUT",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.result) {
+        setProfileData(data.user);
+        setFileList([]);
+        message.success("Profil mis à jour avec succès !");
+        setIsEditModalVisible(false);
+      } else {
+        message.error(data.error || "Erreur lors de la mise à jour du profil");
+      }
     } catch (error) {
+      console.error("Error updating profile:", error);
       message.error("Erreur lors de la mise à jour du profil");
     } finally {
-      setIsLoading(false);
+      setUploading(false);
     }
   };
 
@@ -262,19 +324,46 @@ function Profil() {
         width={500}
       >
         <Form form={form} layout="vertical" onFinish={handleSaveProfile}>
+          <Form.Item name="profilePicture" className={styles.uploadPicture}>
+            <ImgCrop quality={1} aspect={1} cropShape="round">
+              <Upload
+                listType="picture-circle"
+                fileList={fileList}
+                onPreview={handlePreview}
+                onChange={handleChange}
+                // beforeUpload={() => false}
+              >
+                {fileList.length >= 1 ? null : uploadButton}
+              </Upload>
+            </ImgCrop>
+          </Form.Item>
+          {previewImage && (
+            <Image
+              wrapperStyle={{ display: "none" }}
+              preview={{
+                movable: true,
+                toolbar: false,
+                visible: previewOpen,
+                onVisibleChange: (visible) => setPreviewOpen(visible),
+                afterOpenChange: (visible) => !visible && setPreviewImage(""),
+              }}
+              src={previewImage}
+            />
+          )}
+
           <Form.Item
             name="firstName"
             label="Prénom"
             rules={[{ required: true, message: "Veuillez saisir votre prénom" }]}
           >
-            <Input value={profileData?.firstName} placeholder="Votre prénom" />
+            <Input placeholder="Votre prénom" />
           </Form.Item>
           <Form.Item
             name="lastName"
             label="Nom"
             rules={[{ required: true, message: "Veuillez saisir votre nom" }]}
           >
-            <Input value={profileData?.lastName} placeholder="Votre nom complet" />
+            <Input placeholder="Votre nom complet" />
           </Form.Item>
 
           <Form.Item
@@ -292,11 +381,21 @@ function Profil() {
             <Button style={{ marginRight: 8 }} onClick={() => setIsEditModalVisible(false)}>
               Annuler
             </Button>
-            <Button type="primary" htmlType="submit" loading={isLoading}>
+            <Button type="primary" htmlType="submit" loading={uploading}>
               Sauvegarder
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Modal de prévisualisation d'image */}
+      <Modal
+        open={previewOpen}
+        title="Prévisualisation de l'image"
+        footer={null}
+        onCancel={() => setPreviewOpen(false)}
+      >
+        <img alt="preview" style={{ width: "100%" }} src={previewImage} />
       </Modal>
     </div>
   );
