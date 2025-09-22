@@ -1,15 +1,9 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/NewRecipe.module.css";
-import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
+import { Button, Input, Form, Upload, message, Select, Radio, Image } from "antd";
 import ImgCrop from "antd-img-crop";
-import {
-  ArrowLeftOutlined,
-  HomeOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -184,9 +178,6 @@ function CreateRecipe() {
         credentials: "include",
         body: formData,
       });
-
-      console.log(donneesRecette);
-      // Simuler l'enregistrement
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (response.ok) {
         const recipeData = await response.json();
@@ -212,7 +203,7 @@ function CreateRecipe() {
   return (
     <div className={styles.main}>
       <div className={styles.pageContainer}>
-        <Header showBackButton={true} />
+        <Header showBackButton={false} />
 
         <div className={styles.topHeader}>
           <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Nouvelle Recette</h1>

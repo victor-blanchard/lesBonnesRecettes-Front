@@ -3,27 +3,8 @@ import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setLikedRecipes } from "../reducers/users";
 import { toggleLike } from "../utils/toggleLike";
-import {
-  Skeleton,
-  Card,
-  Button,
-  Input,
-  Divider,
-  Avatar,
-  Dropdown,
-  Space,
-  Spin,
-  Flex,
-  Radio,
-} from "antd";
-import {
-  PlusCircleOutlined,
-  SearchOutlined,
-  UserOutlined,
-  MenuOutlined,
-  ClockCircleOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { Skeleton, Input, Divider, Radio } from "antd";
+import { SearchOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Header from "./Header";
@@ -42,7 +23,6 @@ function Home() {
   const onSearch = async (category, search) => {
     setCategoryToDisplay(category);
     setSearchToDisplay(search);
-    console.log(categoryToDisplay, searchToDisplay);
     setIsLoading(true);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/recipes/?category=${category}&search=${search}`
@@ -67,7 +47,6 @@ function Home() {
   };
   useEffect(() => {
     onSearch(categoryToDisplay, searchToDisplay);
-    console.log(" useEffect");
   }, []);
 
   return (
@@ -109,51 +88,6 @@ function Home() {
                 Toutes
               </Radio.Button>
             </Radio.Group>
-            {/* <Button
-              type={categoryToDisplay === "Starter" ? "active" : "default"}
-              active={categoryToDisplay === "Starter"}
-              className={styles.filterButton}
-              onClick={() => onSearch("Starter", searchToDisplay)}
-              shape="round"
-            >
-              Entrées
-            </Button>
-            <Button
-              type={categoryToDisplay === "Main" ? "active" : "default"}
-              active={categoryToDisplay === "Main"}
-              className={styles.filterButton}
-              onClick={() => onSearch("Main", searchToDisplay)}
-              shape="round"
-            >
-              Plats
-            </Button>
-            <Button
-              type={categoryToDisplay === "Desert" ? "primary" : "default"}
-              active={categoryToDisplay === "Desert"}
-              className={styles.filterButton}
-              primaryColor={styles.colorPrimary}
-              onClick={() => onSearch("Desert", searchToDisplay)}
-              shape="round"
-            >
-              Desserts
-            </Button>
-            <Button
-              type={categoryToDisplay === "Drink" ? "primary" : "default"}
-              className={styles.filterButton}
-              onClick={() => onSearch("Drink", searchToDisplay)}
-              shape="round"
-            >
-              Boissons
-            </Button>
-            <Button
-              type={categoryToDisplay === "" ? "active" : "default"}
-              active={categoryToDisplay === ""}
-              className={styles.filterButton}
-              onClick={() => onSearch("", searchToDisplay)}
-              shape="round"
-            >
-              Toutes
-            </Button> */}
           </div>
           {isLoading ? (
             <div className={styles.loadingContainer}>

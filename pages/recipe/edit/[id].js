@@ -3,13 +3,7 @@ import { useRouter } from "next/router";
 import styles from "../../../styles/EditRecipe.module.css";
 import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
 import ImgCrop from "antd-img-crop";
-import {
-  ArrowLeftOutlined,
-  HomeOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -265,8 +259,6 @@ function EditRecipe() {
         credentials: "include",
         body: formData,
       });
-
-      console.log(donneesRecette);
 
       if (response.ok) {
         message.success(isDraft ? "Brouillon modifié !" : "Recette modifiée !");

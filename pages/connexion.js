@@ -78,11 +78,9 @@ function Connexion() {
           body: JSON.stringify({ email, password }),
           credentials: "include",
         });
-        console.log("Connexion:");
         setTimeout(async () => {
           if (response.ok) {
             const data = await response.json();
-            console.log("Connexion:", data);
             message.success("Connexion réussie !");
             dispatch(userIsConnected(true));
             dispatch(setUserId(data._id));
@@ -120,7 +118,6 @@ function Connexion() {
         }, 1000);
         if (response.ok) {
           const data = await response.json();
-          console.log("Inscription:", data);
           message.success("Inscription réussie !");
           dispatch(userIsConnected(true));
           dispatch(setUserId(data._id));

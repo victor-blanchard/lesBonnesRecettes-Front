@@ -1,35 +1,18 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/Profil.module.css";
-import {
-  Button,
-  Avatar,
-  Divider,
-  Switch,
-  Modal,
-  Form,
-  Input,
-  message,
-  Skeleton,
-  Upload,
-} from "antd";
+import { Button, Avatar, Modal, Form, Input, message, Upload, Image } from "antd";
 import ImgCrop from "antd-img-crop";
 import {
-  ArrowLeftOutlined,
   EditOutlined,
   ClockCircleOutlined,
-  HeartOutlined,
   BookOutlined,
   UserOutlined,
-  SettingOutlined,
-  LogoutOutlined,
   PlusOutlined,
   FileOutlined,
   DeleteOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import Header from "../components/Header";
-import ProtectedRoute from "../components/ProtectedRoute";
 import { useAuthGuard } from "../hooks/useAuthGuard";
 import { useDispatch, useSelector } from "react-redux";
 import { userIsConnected, setUserId } from "../reducers/users";
@@ -49,7 +32,7 @@ function Profil() {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.users.value.userId);
   const userConnected = useSelector((state) => state.users.value.userIsConnected);
-  const { userAuthorized } = useAuthGuard();
+  const { userIsConnected } = useAuthGuard();
   const router = useRouter();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,6 +48,9 @@ function Profil() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!userId) {
+          return;
+        }
         const [profileResponse, recipesResponse] = await Promise.all([
           fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
             method: "GET",
@@ -81,7 +67,6 @@ function Profil() {
         setUserRecipes(publishedRecipes);
         const drafts = recipesData.recipes?.filter((recipe) => recipe.isDraft === true);
         setUserDrafts(drafts);
-        console.log(profileData, recipesData);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -175,7 +160,6 @@ function Profil() {
 
           // Transformer la réponse en JSON
           const data = await response.json();
-          console.log("response data: ", data);
 
           if (data.result) {
             dispatch(userIsConnected(false));
@@ -204,7 +188,8 @@ function Profil() {
           recipe.picture ||
           "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
         }
-        alt={recipe.title}
+        alt={recipe.name}
+        loading="lazy"
         className={styles.recipeImage}
       />
       <div className={styles.recipeInfo}>
@@ -221,7 +206,7 @@ function Profil() {
     <div>
       <main className={styles.main}>
         <div className={styles.header}>
-          <Header showBackButton={true} />
+          <Header showBackButton={false} />
           <div className={styles.topHeader}>
             <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Mon Profil</h1>
             <div style={{ width: 48 }}></div> {/* Spacer pour centrer le titre */}

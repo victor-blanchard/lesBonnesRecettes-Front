@@ -3,28 +3,8 @@ import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setLikedRecipes } from "../reducers/users";
 import { toggleLike } from "../utils/toggleLike";
-import {
-  Skeleton,
-  Card,
-  Button,
-  Input,
-  Divider,
-  Avatar,
-  Dropdown,
-  Space,
-  Spin,
-  Flex,
-  Radio,
-  Empty,
-} from "antd";
-import {
-  PlusCircleOutlined,
-  SearchOutlined,
-  UserOutlined,
-  MenuOutlined,
-  ClockCircleOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { Divider, Empty } from "antd";
+import { ClockCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
@@ -54,10 +34,8 @@ function Likes() {
       } else {
         setLikedRecipesToDisplay([]);
       }
-      console.log("likedRecipesToDisplay: ", likedRecipesToDisplay);
     } else {
       setIsLoading(false);
-      console.log("error: ", "Impossible de récupérer les recettes en favoris");
     }
   };
   useEffect(() => {

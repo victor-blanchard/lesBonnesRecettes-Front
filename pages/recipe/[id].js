@@ -2,24 +2,19 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import styles from "../../styles/Recette.module.css";
-import { Button, Avatar, Divider, message, Skeleton, Modal, Dropdown, Space } from "antd";
+import { Button, Avatar, message, Skeleton } from "antd";
 import {
-  ArrowLeftOutlined,
   HeartOutlined,
   HeartFilled,
   ShareAltOutlined,
-  PrinterOutlined,
   ClockCircleOutlined,
   UserOutlined,
   FireOutlined,
-  StarOutlined,
-  BulbOutlined,
-  MenuOutlined,
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
 import Header from "../../components/Header";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate";
 import { useDispatch } from "react-redux";
 import { setLikedRecipes } from "../../reducers/users";
 import { toggleLike } from "../../utils/toggleLike";
@@ -30,13 +25,11 @@ function Recipe() {
   const [recipe, setRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [picture, setPicture] = useState(null);
   const userId = useSelector((state) => state.users.value.userId);
   const userLikedRecipes = useSelector((state) => state.users.value.likedRecipes);
   const dispatch = useDispatch();
   const handleDataFetch = async (id) => {
     try {
-      console.log("id", id);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -58,7 +51,6 @@ function Recipe() {
   useEffect(() => {
     if (router.query.id) {
       const recipeId = router.query.id;
-      console.log("recipeId", recipeId);
       setRecipeId(recipeId);
       handleDataFetch(recipeId);
       if (userLikedRecipes.includes(recipeId)) {
@@ -150,24 +142,29 @@ function Recipe() {
               alt={recipe.name}
               className={styles.recipeImage}
             />
-            {isFavorite ? (
-              <HeartFilled
-                className={`${styles.heartButton} ${styles.heartActive}`}
-                aria-label="Retirer des favoris"
-                onClick={handleFavorite}
-              />
-            ) : (
-              <HeartOutlined
-                className={styles.heartButton}
-                aria-label="Ajouter aux favoris"
-                onClick={handleFavorite}
-              />
+            {recipe.isDraft !== true && (
+              <>
+                {isFavorite ? (
+                  <HeartFilled
+                    className={`${styles.heartButton} ${styles.heartActive}`}
+                    aria-label="Retirer des favoris"
+                    onClick={handleFavorite}
+                  />
+                ) : (
+                  <HeartOutlined
+                    className={styles.heartButton}
+                    aria-label="Ajouter aux favoris"
+                    onClick={handleFavorite}
+                  />
+                )}
+                <ShareAltOutlined
+                  className={styles.shareButton}
+                  aria-label="Partager la recette"
+                  onClick={handleShare}
+                />
+              </>
             )}
-            <ShareAltOutlined
-              className={styles.shareButton}
-              aria-label="Partager la recette"
-              onClick={handleShare}
-            />
+
             <div className={styles.recipeOverlay}>
               <h1 className={styles.recipeTitle}>{recipe.name}</h1>
               <div className={styles.recipeMeta}>
