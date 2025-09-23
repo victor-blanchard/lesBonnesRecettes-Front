@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import styles from "../../styles/Recette.module.css";
-import { Button, Avatar, message, Skeleton } from "antd";
+import { Button, Avatar, message, Skeleton, Modal } from "antd";
 import {
   HeartOutlined,
   HeartFilled,
@@ -75,7 +75,7 @@ function Recipe() {
   const handleEdit = () => {
     router.push(`/recipe/edit/${recipeId}`);
   };
-  const handleDelete = () => {
+  const handleDeleteRecipe = () => {
     Modal.confirm({
       title: "Supprimer la recette",
       content: "Êtes-vous sûr de vouloir supprimer cette recette ? Cette action est irréversible.",
@@ -277,16 +277,16 @@ function Recipe() {
                   className={`${styles.actionButton} ${styles.editButton}`}
                   onClick={handleEdit}
                 >
-                  {recipe.isDraft ? "Modifier" : "Modifier"}
+                  Modifier
                 </Button>
               )}
               {recipe.author?._id === userId && (
                 <Button
                   icon={<DeleteOutlined />}
                   className={`${styles.actionButton} ${styles.deleteButton}`}
-                  onClick={handleDelete}
+                  onClick={handleDeleteRecipe}
                 >
-                  {recipe.isDraft ? "Supprimer" : "Supprimer"}
+                  Supprimer
                 </Button>
               )}
             </div>
