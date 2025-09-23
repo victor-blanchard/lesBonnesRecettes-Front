@@ -75,7 +75,7 @@ function Recipe() {
   const handleEdit = () => {
     router.push(`/recipe/edit/${recipeId}`);
   };
-  const handleDelete = async () => {
+  const handleDelete = () => {
     Modal.confirm({
       title: "Supprimer la recette",
       content: "Êtes-vous sûr de vouloir supprimer cette recette ? Cette action est irréversible.",
