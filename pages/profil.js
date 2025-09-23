@@ -52,7 +52,7 @@ function Profil() {
           return;
         }
         const [profileResponse, recipesResponse] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+          fetch(`/api/users/me`, {
             method: "GET",
             credentials: "include",
           }),
