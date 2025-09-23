@@ -72,7 +72,7 @@ function Connexion() {
     setIsLoading(true);
     try {
       if (isLogin) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/signIn`, {
+        const response = await fetch(`/api/users/signIn`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -108,7 +108,7 @@ function Connexion() {
           formData.append("profilePicture", fileList[0].originFileObj);
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/signUp`, {
+        const response = await fetch(`/api/users/signUp`, {
           method: "POST",
           body: formData,
           credentials: "include",
