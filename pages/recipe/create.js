@@ -262,7 +262,7 @@ function CreateRecipe() {
               />
             )}
 
-            <div className={styles.sectionTitle}>Temps de préparation</div>
+            <div className={styles.sectionTitle}>Catégorie</div>
             <div className={styles.timeContainer}>
               <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
                 <Radio.Button
