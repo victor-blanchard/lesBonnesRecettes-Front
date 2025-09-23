@@ -22,7 +22,7 @@ export async function toggleLike({
   const isCurrentlyFavorite = userLikedRecipes.includes(recipeId);
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/likeRecipe`, {
+    const response = await fetch(`/api/users/likeRecipe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ recipeId }),
