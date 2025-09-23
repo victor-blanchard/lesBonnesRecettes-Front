@@ -76,20 +76,28 @@ function Recipe() {
     router.push(`/recipe/edit/${recipeId}`);
   };
   const handleDelete = async () => {
-    try {
-      const response = await fetch(`/api/recipes/${recipeId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (response.ok) {
-        message.success("Recette supprimée avec succès");
-        router.push("/profil");
-      } else {
-        message.error("Impossible de supprimer la recette");
-      }
-    } catch (error) {
-      message.error("Impossible de supprimer la recette");
-    }
+    Modal.confirm({
+      title: "Supprimer la recette",
+      content: "Êtes-vous sûr de vouloir supprimer cette recette ? Cette action est irréversible.",
+      okText: "Oui",
+      cancelText: "Non",
+      onOk: async () => {
+        try {
+          const response = await fetch(`/api/recipes/${recipeId}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          if (response.ok) {
+            message.success("Recette supprimée avec succès");
+            router.push("/profil");
+          } else {
+            message.error("Impossible de supprimer la recette");
+          }
+        } catch (error) {
+          message.error("Impossible de supprimer la recette");
+        }
+      },
+    });
   };
 
   const handleShare = async () => {
