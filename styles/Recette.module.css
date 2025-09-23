@@ -263,7 +263,6 @@
   margin-left: 1rem;
   line-height: 1.6;
   color: #333;
-  text-align: justify;
   text-align-last: left; /* Dernière ligne à gauche */
   hyphens: auto; /* Césure automatique */
   word-spacing: -0.1em;
