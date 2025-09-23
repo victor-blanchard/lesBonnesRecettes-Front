@@ -51,7 +51,7 @@ function EditRecipe() {
 
     try {
       setRecipeLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${id}`, {
+      const response = await fetch(`/api/recipes/${id}`, {
         method: "GET",
         credentials: "include",
       });
@@ -254,7 +254,7 @@ function EditRecipe() {
       }
 
       // Envoyer la requête PUT pour modifier la recette
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${id}`, {
+      const response = await fetch(`/api/recipes/${id}`, {
         method: "PUT",
         credentials: "include",
         body: formData,

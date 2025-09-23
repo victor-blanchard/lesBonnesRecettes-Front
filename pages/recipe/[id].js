@@ -30,7 +30,7 @@ function Recipe() {
   const dispatch = useDispatch();
   const handleDataFetch = async (id) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${id}`, {
+      const response = await fetch(`/api/recipes/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -77,7 +77,7 @@ function Recipe() {
   };
   const handleDelete = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/${recipeId}`, {
+      const response = await fetch(`/api/recipes/${recipeId}`, {
         method: "DELETE",
         credentials: "include",
       });

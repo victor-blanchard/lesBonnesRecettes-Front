@@ -19,7 +19,7 @@ function Likes() {
 
   const getUserLikedRecipes = async () => {
     setIsLoading(true);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/likedRecipes`, {
+    const response = await fetch(`/api/users/me/likedRecipes`, {
       method: "GET",
       credentials: "include",
     });

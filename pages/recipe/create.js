@@ -173,7 +173,7 @@ function CreateRecipe() {
         formData.append("image", fileList[0].originFileObj);
       }
       // Si toutes les validations passent, envoyer la requête
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/add`, {
+      const response = await fetch(`/api/recipes/add`, {
         method: "POST",
         credentials: "include",
         body: formData,

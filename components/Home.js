@@ -24,9 +24,7 @@ function Home() {
     setCategoryToDisplay(category);
     setSearchToDisplay(search);
     setIsLoading(true);
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/recipes/?category=${category}&search=${search}`
-    );
+    const response = await fetch(`/api/recipes/?category=${category}&search=${search}`);
     setTimeout(() => {
       setIsLoading(false);
     }, 300);

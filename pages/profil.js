@@ -56,7 +56,7 @@ function Profil() {
             method: "GET",
             credentials: "include",
           }),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/user/${userId}`),
+          fetch(`/api/recipes/user/${userId}`),
         ]);
         const [profileData, recipesData] = await Promise.all([
           profileResponse.json(),
@@ -120,7 +120,7 @@ function Profil() {
         formData.append("profilePicture", fileList[0].originFileObj);
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/update`, {
+      const response = await fetch(`/api/users/update`, {
         method: "PUT",
         credentials: "include",
         body: formData,
@@ -153,7 +153,7 @@ function Profil() {
       cancelText: "Non",
       onOk: async () => {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/delete`, {
+          const response = await fetch(`/api/users/delete`, {
             method: "DELETE",
             credentials: "include",
           });
