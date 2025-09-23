@@ -303,7 +303,7 @@ function EditRecipe() {
   return (
     <div className={styles.main}>
       <div className={styles.pageContainer}>
-        <Header showBackButton={true} />
+        <Header showBackButton={false} />
 
         <div className={styles.topHeader}>
           <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>

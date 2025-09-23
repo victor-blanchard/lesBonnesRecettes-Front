@@ -92,17 +92,34 @@ function Recipe() {
     }
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: recipe.title,
-        text: `Découvrez cette délicieuse recette : ${recipe.title}`,
-        url: window.location.href,
-      });
-    } else {
+  const handleShare = async () => {
+    try {
+      if (!recipe) return;
+      if (navigator.share) {
+        await navigator.share({
+          title: recipe.title,
+          text: `Découvrez cette délicieuse recette : ${recipe.title}`,
+          url: window.location.href,
+        });
+        return;
+      }
       // Fallback pour les navigateurs qui ne supportent pas l'API Share
-      navigator.clipboard.writeText(window.location.href);
-      message.success("Lien copié dans le presse-papiers !");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(window.location.href);
+        message.success("Lien copié dans le presse-papiers !");
+      }
+    } catch (error) {
+      // L'utilisateur peut annuler le partage : ne pas afficher d'erreur dans ce cas
+      if (
+        error &&
+        (error.name === "AbortError" ||
+          String(error.message || "")
+            .toLowerCase()
+            .includes("share canceled"))
+      ) {
+        return; // annulation silencieuse
+      }
+      message.error("Impossible de partager ce contenu");
     }
   };
 
