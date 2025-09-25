@@ -28,18 +28,19 @@ function Home() {
     // setTimeout(() => {
     //   setIsLoading(false);
     // }, 300);
-    if (response.ok) {
+    if (response.ok === false) {
+      setIsLoading(false);
+    } else {
       const data = await response.json();
       dispatch(
         setRecipesToDisplay({
-          recipes: data.recipes || data, // S'assurer que nous avons un tableau
+          recipes: data.recipes,
           filters: {
             category: category,
             search: search,
           },
         })
       );
-    } else {
       setIsLoading(false);
     }
   };
