@@ -122,7 +122,7 @@
 }
 
 .recipeTitle {
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -377,7 +377,7 @@
 
 /* @media (max-width: 768px) {
   .recipeTitle {
-    font-size: 2rem;
+    font-size: 1.9rem;
   }
 
   .recipeMeta {
