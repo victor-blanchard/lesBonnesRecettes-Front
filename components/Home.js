@@ -25,9 +25,9 @@ function Home() {
     setSearchToDisplay(search);
     setIsLoading(true);
     const response = await fetch(`/api/recipes/?category=${category}&search=${search}`);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 300);
     if (response.ok) {
       const data = await response.json();
       dispatch(
@@ -47,10 +47,17 @@ function Home() {
     onSearch(categoryToDisplay, searchToDisplay);
   }, []);
 
+  // Fonction pour rafraîchir toutes les recettes (sans filtres)
+  const refreshAllRecipes = () => {
+    setCategoryToDisplay("");
+    setSearchToDisplay("");
+    onSearch("", "");
+  };
+
   return (
     <div>
       <main className={styles.main}>
-        <Header showBackButton={false} />
+        <Header showBackButton={false} onHomeRefresh={refreshAllRecipes} />
 
         {/* Contenu principal avec padding pour le Header flottant */}
         <div className={styles.mainContent}>

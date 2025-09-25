@@ -7,12 +7,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { userIsConnected, setUserId, setLikedRecipes } from "../reducers/users";
 import { UserOutlined } from "@ant-design/icons";
 
-function Header({ showBackButton = false, onBackClick }) {
+function Header({ showBackButton = false, onBackClick, onHomeRefresh }) {
   const router = useRouter();
   const displayMenu = useSelector((state) => state.users.value.userIsConnected);
   const dispatch = useDispatch();
   const handleBackToHome = () => {
     router.push("/");
+    // Si onHomeRefresh est fourni, l'appeler pour rafraîchir les recettes
+    if (onHomeRefresh) {
+      onHomeRefresh();
+    }
   };
 
   const handleLogout = async () => {

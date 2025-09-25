@@ -29,8 +29,8 @@ function Likes() {
     if (response.ok) {
       setIsLoading(false);
       const data = await response.json();
-      if (data.user?.likedRecipes?.length > 0) {
-        setLikedRecipesToDisplay(data.user.likedRecipes);
+      if (data.likedRecipes?.length > 0) {
+        setLikedRecipesToDisplay(data.likedRecipes);
       } else {
         setLikedRecipesToDisplay([]);
       }
