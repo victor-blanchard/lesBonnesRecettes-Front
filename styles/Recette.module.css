@@ -122,6 +122,7 @@
 }
 
 .recipeTitle {
+  width: 90%;
   font-size: 1.9rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
