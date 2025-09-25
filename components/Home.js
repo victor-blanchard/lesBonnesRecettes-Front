@@ -6,7 +6,7 @@ import { toggleLike } from "../utils/toggleLike";
 import { Skeleton, Input, Divider, Radio } from "antd";
 import { SearchOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Header from "./Header";
 import { setRecipesToDisplay } from "../reducers/recipes";
 
@@ -19,17 +19,12 @@ function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [categoryToDisplay, setCategoryToDisplay] = useState("");
   const [searchToDisplay, setSearchToDisplay] = useState("");
-  const searchInputRef = useRef(null);
-  const radioGroupRef = useRef(null);
 
   const onSearch = async (category, search) => {
     setCategoryToDisplay(category);
     setSearchToDisplay(search);
     setIsLoading(true);
     const response = await fetch(`/api/recipes/?category=${category}&search=${search}`);
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 300);
     if (response.ok === false) {
       setIsLoading(false);
     } else {
@@ -54,14 +49,6 @@ function Home() {
   const refreshAllRecipes = () => {
     setCategoryToDisplay("");
     setSearchToDisplay("");
-    // Réinitialiser la valeur du champ de recherche
-    // if (searchInputRef.current) {
-    //   searchInputRef.current.input.value = "";
-    // }
-    // // Réinitialiser le Radio.Group pour sélectionner "Toutes"
-    // if (radioGroupRef.current) {
-    //   radioGroupRef.current.setValue("");
-    // }
     onSearch("", "");
   };
 
@@ -89,12 +76,7 @@ function Home() {
           <Divider className={styles.divider} />
 
           <div className={styles.filtersTab}>
-            <Radio.Group
-              value={categoryToDisplay}
-              // ref={radioGroupRef}
-              defaultValue=""
-              buttonStyle="solid"
-            >
+            <Radio.Group value={categoryToDisplay} defaultValue="" buttonStyle="solid">
               <Radio.Button onClick={() => onSearch("Starter", searchToDisplay)} value="Starter">
                 Entrées
               </Radio.Button>

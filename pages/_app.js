@@ -7,6 +7,7 @@ import recipes from "../reducers/recipes";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { message } from "antd";
 
 const reducers = combineReducers({ users, recipes });
 
@@ -35,6 +36,13 @@ const store = configureStore({
 });
 
 const persistor = persistStore(store);
+
+// Configuration globale des messages
+message.config({
+  top: 100, // Distance du haut de l'écran en pixels
+  duration: 2, // Durée d'affichage en secondes
+  maxCount: 3, // Nombre maximum de messages simultanés
+});
 
 function App({ Component, pageProps }) {
   return (
