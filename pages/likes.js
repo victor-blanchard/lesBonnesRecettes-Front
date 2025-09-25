@@ -8,12 +8,14 @@ import { ClockCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
+import { useAuthGuard } from "../hooks/useAuthGuard";
 
 function Likes() {
   const router = useRouter();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.users.value.userId);
   const userLikedRecipes = useSelector((state) => state.users.value.likedRecipes);
+  const { userIsConnected } = useAuthGuard();
   const [likedRecipesToDisplay, setLikedRecipesToDisplay] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
