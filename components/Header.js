@@ -92,7 +92,7 @@ function Header({ showBackButton = false, onBackClick, onHomeRefresh }) {
       )}
 
       <div className={styles.logo} onClick={handleBackToHome}>
-        <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Recette</h1>
+        <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Minimeal</h1>
         <h1 style={{ margin: 0, fontSize: "0.7rem", fontWeight: 600 }}>®</h1>
       </div>
       {displayMenu ? (
