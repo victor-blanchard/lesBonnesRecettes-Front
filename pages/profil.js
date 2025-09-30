@@ -152,26 +152,33 @@ function Profil() {
       okText: "Oui",
       cancelText: "Non",
       onOk: async () => {
-        const response = await fetch(`/api/users/delete`, {
-          method: "DELETE",
-          credentials: "include",
-        });
+        try {
+          const response = await fetch(`/api/users/delete`, {
+            method: "DELETE",
+            credentials: "include",
+          });
 
-        // Transformer la réponse en JSON
-        const data = await response.json();
-        console.log(data);
-        if (data?.result) {
-          dispatch(userIsConnected(false));
-          dispatch(setUserId(null));
-          message.success("Compte supprimé avec succès");
-          router.push("/");
-        } else {
-          message.error(data.error || "Erreur lors de la suppression du compte");
+          // Vérifier si la réponse est OK
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          // Transformer la réponse en JSON
+          const data = await response.json();
+          console.log("Response data:", data);
+
+          if (data && data.result === true) {
+            dispatch(userIsConnected(false));
+            dispatch(setUserId(null));
+            message.success("Compte supprimé avec succès");
+            router.push("/");
+          } else {
+            message.error(data.error || "Erreur lors de la suppression du compte");
+          }
+        } catch (error) {
+          console.error("Error deleting account:", error);
+          message.error("Erreur lors de la suppression du compte");
         }
-        // catch (error) {
-        //   console.error("Error deleting account:", error);
-        //   message.error("Erreur lors du fetch");
-        // }
       },
     });
   };
