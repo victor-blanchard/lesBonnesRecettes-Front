@@ -173,6 +173,7 @@ function Profil() {
             message.success("Compte supprimé avec succès");
             router.push("/");
           } else {
+            console.log("erreur suppression:", data);
             message.error(data.error || "Erreur lors de la suppression du compte");
           }
         } catch (error) {
