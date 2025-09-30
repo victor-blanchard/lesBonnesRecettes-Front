@@ -159,7 +159,7 @@ function Profil() {
 
         // Transformer la réponse en JSON
         const data = await response.json();
-
+        console.log(data);
         if (data?.result) {
           dispatch(userIsConnected(false));
           dispatch(setUserId(null));
