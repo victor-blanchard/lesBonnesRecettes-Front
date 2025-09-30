@@ -32,7 +32,7 @@ function Profil() {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.users.value.userId);
   const userConnected = useSelector((state) => state.users.value.userIsConnected);
-  const { userIsConnected } = useAuthGuard();
+  const { checkUserAuth } = useAuthGuard();
   const router = useRouter();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
