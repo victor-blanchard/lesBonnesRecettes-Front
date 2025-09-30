@@ -49,7 +49,7 @@ function App({ Component, pageProps }) {
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
         <Head>
-          <title>Recette®</title>
+          <title>Minimeal®</title>
         </Head>
         <Component {...pageProps} />
       </PersistGate>
