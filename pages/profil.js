@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/Profil.module.css";
-import { Button, Avatar, Modal, Form, Input, message, Upload, Image } from "antd";
+import { Button, Avatar, Modal, Form, Input, message, Upload, Image, Spin } from "antd";
 import ImgCrop from "antd-img-crop";
 import {
   EditOutlined,
@@ -11,6 +11,7 @@ import {
   PlusOutlined,
   FileOutlined,
   DeleteOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import Header from "../components/Header";
 import { useAuthGuard } from "../hooks/useAuthGuard";
