@@ -47,7 +47,9 @@ function Likes() {
         <Header showBackButton={false} />
         <div className={styles.mainContent}>
           <div className={styles.topHeader}>
-            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 600 }}>Mes favoris</h1>
+            <h1 style={{ margin: 0, marginLeft: "3%", fontSize: "1.5rem", fontWeight: 600 }}>
+              Mes favoris
+            </h1>
             <div style={{ width: 48 }}></div>
           </div>
           <Divider className={styles.divider} />

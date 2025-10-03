@@ -213,11 +213,9 @@ function Profil() {
   if (isLoading) {
     return (
       <div className={styles.main}>
-        <div className={styles.profilContainer}>
-          <div className={styles.spinContainer}>
-            <Header showBackButton={false} />
-            <Spin indicator={<LoadingOutlined className={styles.recipeSpin} spin />} size="large" />
-          </div>
+        <div className={styles.spinContainer}>
+          <Header showBackButton={false} />
+          <Spin indicator={<LoadingOutlined className={styles.recipeSpin} spin />} size="large" />
         </div>
       </div>
     );
