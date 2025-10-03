@@ -44,7 +44,7 @@ function Recipe() {
       }
     } catch (error) {
       message.error("Recette introuvable");
-      router.push("/");
+      // router.push("/");
     }
   };
 
@@ -131,19 +131,19 @@ function Recipe() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className={styles.main}>
-        <div className={styles.pageContainer}>
-          <Skeleton active />
-        </div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className={styles.main}>
+  //       <div className={styles.pageContainer}>
+  //         <Skeleton active />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (!recipe) {
-    return null;
-  }
+  // if (!recipe) {
+  //   return null;
+  // }
 
   return (
     <div className={styles.main}>
@@ -154,50 +154,56 @@ function Recipe() {
         {/* Container principal de la recette */}
         <div className={styles.recipeContainer}>
           <div className={styles.recipeHero}>
-            {recipe.isDraft && (
-              <div className={styles.draftBadge}>
-                <span>Brouillon</span>
-              </div>
-            )}
-            <img
-              src={
-                recipe.picture ||
-                "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
-              }
-              alt={recipe.name}
-              className={styles.recipeImage}
-            />
-            {recipe.isDraft !== true && (
+            {isLoading ? (
+              <div>{<Skeleton active />}</div>
+            ) : (
               <>
-                {isFavorite ? (
-                  <HeartFilled
-                    className={`${styles.heartButton} ${styles.heartActive}`}
-                    aria-label="Retirer des favoris"
-                    onClick={handleFavorite}
-                  />
-                ) : (
-                  <HeartOutlined
-                    className={styles.heartButton}
-                    aria-label="Ajouter aux favoris"
-                    onClick={handleFavorite}
-                  />
+                {recipe.isDraft && (
+                  <div className={styles.draftBadge}>
+                    <span>Brouillon</span>
+                  </div>
                 )}
-                <ShareAltOutlined
-                  className={styles.shareButton}
-                  aria-label="Partager la recette"
-                  onClick={handleShare}
+                <img
+                  src={
+                    recipe.picture ||
+                    "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
+                  }
+                  alt={recipe.name}
+                  className={styles.recipeImage}
                 />
+                {recipe.isDraft !== true && (
+                  <>
+                    {isFavorite ? (
+                      <HeartFilled
+                        className={`${styles.heartButton} ${styles.heartActive}`}
+                        aria-label="Retirer des favoris"
+                        onClick={handleFavorite}
+                      />
+                    ) : (
+                      <HeartOutlined
+                        className={styles.heartButton}
+                        aria-label="Ajouter aux favoris"
+                        onClick={handleFavorite}
+                      />
+                    )}
+                    <ShareAltOutlined
+                      className={styles.shareButton}
+                      aria-label="Partager la recette"
+                      onClick={handleShare}
+                    />
+                  </>
+                )}
+
+                <div className={styles.recipeOverlay}>
+                  <h1 className={styles.recipeTitle}>{recipe.name}</h1>
+                  <div className={styles.recipeMeta}>
+                    <span>
+                      <ClockCircleOutlined /> {recipe.duration}
+                    </span>
+                  </div>
+                </div>
               </>
             )}
-
-            <div className={styles.recipeOverlay}>
-              <h1 className={styles.recipeTitle}>{recipe.name}</h1>
-              <div className={styles.recipeMeta}>
-                <span>
-                  <ClockCircleOutlined /> {recipe.duration}
-                </span>
-              </div>
-            </div>
           </div>
 
           {/* Contenu de la recette */}

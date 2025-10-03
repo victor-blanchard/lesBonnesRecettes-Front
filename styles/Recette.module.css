@@ -83,6 +83,7 @@
   position: relative;
   /* max-height: 15rem; */
   overflow: hidden;
+  background-color: #9e1d1d;
 }
 
 .draftBadge {

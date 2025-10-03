@@ -3,8 +3,8 @@ import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setLikedRecipes } from "../reducers/users";
 import { toggleLike } from "../utils/toggleLike";
-import { Skeleton, Input, Divider, Radio } from "antd";
-import { SearchOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { Skeleton, Input, Divider, Radio, Spin } from "antd";
+import { SearchOutlined, ClockCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Header from "./Header";
@@ -94,6 +94,23 @@ function Home() {
               </Radio.Button>
             </Radio.Group>
           </div>
+          <p className={styles.recipesNumber}>
+            {isLoading ? (
+              <>
+                <Spin
+                  indicator={<LoadingOutlined className={styles.recipesNumberSpin} spin />}
+                  size="small"
+                />
+                <span>Patience - Ratatouille s'occupe de tout !</span>
+              </>
+            ) : (
+              <>
+                {Array.isArray(recipesToDisplay) ? recipesToDisplay.length : 0} recette
+                {recipesToDisplay.length > 1 ? "s" : ""} trouvée
+                {recipesToDisplay.length > 1 ? "s" : ""}
+              </>
+            )}
+          </p>
           {isLoading ? (
             <div className={styles.loadingContainer}>
               {Array.from({ length: 6 }).map((_, index) => (
@@ -106,11 +123,6 @@ function Home() {
             </div>
           ) : (
             <>
-              <p className={styles.recipesNumber}>
-                {Array.isArray(recipesToDisplay) ? recipesToDisplay.length : 0} recette
-                {recipesToDisplay.length > 1 ? "s" : ""} trouvée
-                {recipesToDisplay.length > 1 ? "s" : ""}
-              </p>
               <div className={styles.recipesGrid}>
                 {Array.isArray(recipesToDisplay) &&
                   recipesToDisplay.map((recipe) => {
