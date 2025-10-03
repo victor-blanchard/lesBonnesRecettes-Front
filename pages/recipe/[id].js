@@ -136,7 +136,11 @@ function Recipe() {
       <div className={styles.main}>
         <div className={styles.pageContainer}>
           <div className={styles.recipeContainer}>
-            <Skeleton active />
+            <div className={styles.recipeHero}>
+              <div className={styles.recipeImage}>
+                <Skeleton active paragraph={{ rows: 2 }} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
