@@ -215,7 +215,7 @@ function Profil() {
       <div className={styles.main}>
         <div className={styles.spinContainer}>
           <Header showBackButton={false} />
-          <Spin indicator={<LoadingOutlined className={styles.recipeSpin} spin />} size="large" />
+          <Spin indicator={<LoadingOutlined className={styles.profilSpin} spin />} size="large" />
         </div>
       </div>
     );
