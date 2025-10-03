@@ -134,15 +134,7 @@ function Recipe() {
   if (isLoading) {
     return (
       <div className={styles.main}>
-        <div className={styles.pageContainer}>
-          <div className={styles.recipeContainer}>
-            <div className={styles.recipeHero}>
-              <div className={styles.recipeImage}>
-                <Skeleton active paragraph={{ rows: 2 }} />
-              </div>
-            </div>
-          </div>
-        </div>
+        <Spin indicator={<LoadingOutlined className={styles.recipeSpin} spin />} size="large" />
       </div>
     );
   }
