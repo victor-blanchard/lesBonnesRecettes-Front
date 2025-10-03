@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import styles from "../../styles/Recette.module.css";
-import { Button, Avatar, message, Skeleton, Modal } from "antd";
+import { Button, Avatar, message, Spin, Modal } from "antd";
 import {
   HeartOutlined,
   HeartFilled,
@@ -12,6 +12,7 @@ import {
   FireOutlined,
   EditOutlined,
   DeleteOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import Header from "../../components/Header";
 import { formatDate } from "../../utils/formatDate";
