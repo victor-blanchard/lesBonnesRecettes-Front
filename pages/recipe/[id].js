@@ -135,6 +135,7 @@ function Recipe() {
   if (isLoading) {
     return (
       <div className={styles.main}>
+        <Header showBackButton={false} />
         <Spin indicator={<LoadingOutlined className={styles.recipeSpin} spin />} size="large" />
       </div>
     );
@@ -146,11 +147,9 @@ function Recipe() {
 
   return (
     <div className={styles.main}>
-      {/* Header avec bouton retour */}
       <Header showBackButton={false} />
 
       <div className={styles.pageContainer}>
-        {/* Container principal de la recette */}
         <div className={styles.recipeContainer}>
           <div className={styles.recipeHero}>
             {recipe.isDraft && (

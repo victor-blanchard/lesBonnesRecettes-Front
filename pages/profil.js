@@ -209,6 +209,15 @@ function Profil() {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <div className={styles.main}>
+        <Header showBackButton={false} />
+        <Spin indicator={<LoadingOutlined className={styles.recipeSpin} spin />} size="large" />
+      </div>
+    );
+  }
+
   return (
     <div>
       <main className={styles.main}>
