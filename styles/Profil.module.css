@@ -225,6 +225,14 @@
   border-color: #ff7875 !important;
   color: white !important;
 }
+
+.spinContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5%;
+}
 .recipeSpin {
   font-size: 3rem;
   color: #ff7900 !important;
