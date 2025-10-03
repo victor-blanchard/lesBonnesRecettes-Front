@@ -135,7 +135,7 @@ function Recipe() {
     return (
       <div className={styles.main}>
         <div className={styles.pageContainer}>
-          <div className={styles.recipeHero}>
+          <div className={styles.recipeContainer}>
             <Skeleton active />
           </div>
         </div>
