@@ -342,8 +342,8 @@ function Profil() {
           theme={{
             token: {
               colorPrimary: "#333333", // couleur principale (appliquée au bouton radio actif)
-              // boxShadow: "0 4px 0px rgba(0, 0, 0, 0)", // box-shadow global
-              // controlOutline: "0 0 0 3px rgba(0, 0, 0, 0)", // focus/active outline
+              boxShadow: "0 4px 0px rgba(0, 0, 0, 0)", // box-shadow global
+              controlOutline: "0 0 0 3px rgba(0, 0, 0, 0)", // focus/active outline
             },
           }}
         >
