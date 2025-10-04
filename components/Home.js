@@ -6,6 +6,7 @@ import { toggleLike } from "../utils/toggleLike";
 import { Skeleton, Input, Divider, Radio, Spin, ConfigProvider } from "antd";
 import { SearchOutlined, ClockCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Header from "./Header";
 import { setRecipesToDisplay } from "../reducers/recipes";
