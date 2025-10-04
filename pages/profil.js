@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/Profil.module.css";
-import { Button, Avatar, Modal, Form, Input, message, Upload, Image, Spin } from "antd";
+import {
+  Button,
+  Avatar,
+  Modal,
+  Form,
+  Input,
+  message,
+  Upload,
+  Image,
+  Spin,
+  ConfigProvider,
+} from "antd";
 import ImgCrop from "antd-img-crop";
 import {
   EditOutlined,
@@ -327,69 +338,79 @@ function Profil() {
         footer={null}
         width={500}
       >
-        <Form form={form} layout="vertical" onFinish={handleSaveProfile}>
-          <Form.Item name="profilePicture" className={styles.uploadPicture}>
-            <ImgCrop quality={1} aspect={1} cropShape="round">
-              <Upload
-                listType="picture-circle"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-                // beforeUpload={() => false}
-              >
-                {fileList.length >= 1 ? null : uploadButton}
-              </Upload>
-            </ImgCrop>
-          </Form.Item>
-          {previewImage && (
-            <Image
-              wrapperStyle={{ display: "none" }}
-              preview={{
-                movable: true,
-                toolbar: false,
-                visible: previewOpen,
-                onVisibleChange: (visible) => setPreviewOpen(visible),
-                afterOpenChange: (visible) => !visible && setPreviewImage(""),
-              }}
-              src={previewImage}
-            />
-          )}
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#333333", // couleur principale (appliquée au bouton radio actif)
+              // boxShadow: "0 4px 0px rgba(0, 0, 0, 0)", // box-shadow global
+              // controlOutline: "0 0 0 3px rgba(0, 0, 0, 0)", // focus/active outline
+            },
+          }}
+        >
+          <Form form={form} layout="vertical" onFinish={handleSaveProfile}>
+            <Form.Item name="profilePicture" className={styles.uploadPicture}>
+              <ImgCrop quality={1} aspect={1} cropShape="round">
+                <Upload
+                  listType="picture-circle"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                  // beforeUpload={() => false}
+                >
+                  {fileList.length >= 1 ? null : uploadButton}
+                </Upload>
+              </ImgCrop>
+            </Form.Item>
+            {previewImage && (
+              <Image
+                wrapperStyle={{ display: "none" }}
+                preview={{
+                  movable: true,
+                  toolbar: false,
+                  visible: previewOpen,
+                  onVisibleChange: (visible) => setPreviewOpen(visible),
+                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                }}
+                src={previewImage}
+              />
+            )}
 
-          <Form.Item
-            name="firstName"
-            label="Prénom"
-            rules={[{ required: true, message: "Veuillez saisir votre prénom" }]}
-          >
-            <Input placeholder="Votre prénom" />
-          </Form.Item>
-          <Form.Item
-            name="lastName"
-            label="Nom"
-            rules={[{ required: true, message: "Veuillez saisir votre nom" }]}
-          >
-            <Input placeholder="Votre nom complet" />
-          </Form.Item>
+            <Form.Item
+              name="firstName"
+              label="Prénom"
+              rules={[{ required: true, message: "Veuillez saisir votre prénom" }]}
+            >
+              <Input placeholder="Votre prénom" />
+            </Form.Item>
+            <Form.Item
+              name="lastName"
+              label="Nom"
+              rules={[{ required: true, message: "Veuillez saisir votre nom" }]}
+            >
+              <Input placeholder="Votre nom complet" />
+            </Form.Item>
 
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: "Veuillez saisir votre email" },
-              { type: "email", message: "Veuillez saisir un email valide" },
-            ]}
-          >
-            <Input placeholder="votre.email@example.com" />
-          </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Veuillez saisir votre email" },
+                { type: "email", message: "Veuillez saisir un email valide" },
+              ]}
+            >
+              <Input placeholder="votre.email@example.com" />
+            </Form.Item>
 
-          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
-            <Button style={{ marginRight: 8 }} onClick={() => setIsEditModalVisible(false)}>
-              Annuler
-            </Button>
-            <Button type="primary" htmlType="submit" loading={uploading}>
-              Sauvegarder
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+              <Button style={{ marginRight: 8 }} onClick={() => setIsEditModalVisible(false)}>
+                Annuler
+              </Button>
+              <Button type="primary" htmlType="submit" loading={uploading}>
+                Sauvegarder
+              </Button>
+            </Form.Item>
+          </Form>
+        </ConfigProvider>
       </Modal>
 
       {/* Modal de prévisualisation d'image */}

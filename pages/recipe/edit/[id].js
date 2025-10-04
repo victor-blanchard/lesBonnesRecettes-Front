@@ -1,7 +1,19 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import styles from "../../../styles/EditRecipe.module.css";
-import { Button, Input, Form, Upload, message, Modal, Select, Radio, Skeleton, Image } from "antd";
+import {
+  Button,
+  Input,
+  Form,
+  Upload,
+  message,
+  Modal,
+  Select,
+  Radio,
+  Skeleton,
+  Image,
+  ConfigProvider,
+} from "antd";
 import ImgCrop from "antd-img-crop";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 const getBase64 = (file) =>
@@ -311,234 +323,244 @@ function EditRecipe() {
           </h1>
           <div style={{ width: 48 }}></div>
         </div>
-        <div className={styles.formContainer}>
-          <Form
-            form={form}
-            layout="vertical"
-            initialValues={{ title: name, description: description }}
-          >
-            <Form.Item
-              label="Titre de la recette"
-              name="title"
-              rules={[{ required: true, message: "Le titre est obligatoire" }]}
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#333333", // couleur principale (appliquée au bouton radio actif)
+              boxShadow: "0 4px 0px rgba(0, 0, 0, 0)", // box-shadow global
+              controlOutline: "0 0 0 3px rgba(0, 0, 0, 0)", // focus/active outline
+            },
+          }}
+        >
+          <div className={styles.formContainer}>
+            <Form
+              form={form}
+              layout="vertical"
+              initialValues={{ title: name, description: description }}
             >
-              <Input
-                placeholder="Ex : Gâteau au chocolat"
-                className={styles.titleInput}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[{ required: true, message: "La description est obligatoire" }]}
-            >
-              <Input.TextArea
-                rows={3}
-                placeholder="Décrivez brièvement la recette..."
-                className={styles.descriptionInput}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </Form.Item>
-            <div className={styles.sectionTitle}>Photo</div>
-
-            <ImgCrop quality={1} aspect={16 / 9} cropShape="rect" zoomSlider>
-              <Upload
-                listType="picture-card"
-                fileList={fileList}
-                onChange={handleChange}
-                onPreview={handlePreview}
-                // beforeUpload={() => false}
+              <Form.Item
+                label="Titre de la recette"
+                name="title"
+                rules={[{ required: true, message: "Le titre est obligatoire" }]}
               >
-                {fileList.length >= 1 ? null : uploadButton}
-              </Upload>
-            </ImgCrop>
-
-            {previewImage && (
-              <Image
-                wrapperStyle={{ display: "none" }}
-                preview={{
-                  movable: true,
-                  toolbar: false,
-                  visible: previewOpen,
-                  onVisibleChange: (visible) => setPreviewOpen(visible),
-                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                }}
-                src={previewImage}
-              />
-            )}
-
-            <div className={styles.sectionTitle}>Catégorie</div>
-            <div className={styles.timeContainer}>
-              <Radio.Group buttonStyle="solid" className={styles.timeRadio} value={category}>
-                <Radio.Button
-                  className={styles.timeRadioButton}
-                  value="Plat"
-                  onClick={() => setCategory("Plat")}
-                >
-                  Plat
-                </Radio.Button>
-                <Radio.Button
-                  className={styles.timeRadioButton}
-                  value="Starter"
-                  onClick={() => setCategory("Starter")}
-                >
-                  Entrée
-                </Radio.Button>
-                <Radio.Button
-                  className={styles.timeRadioButton}
-                  value="Desert"
-                  onClick={() => setCategory("Desert")}
-                >
-                  Dessert
-                </Radio.Button>
-                <Radio.Button
-                  className={styles.timeRadioButton}
-                  value="Drink"
-                  onClick={() => setCategory("Drink")}
-                >
-                  Boisson
-                </Radio.Button>
-              </Radio.Group>
-            </div>
-            <div className={styles.sectionTitle}>Temps de préparation</div>
-            <div className={styles.timeContainer}>
-              <Radio.Group buttonStyle="solid" className={styles.timeRadio} value={duration}>
-                <Radio.Button
-                  className={styles.timeRadioButton}
-                  value="Rapide"
-                  onClick={() => setDuration("Rapide")}
-                >
-                  Rapide
-                </Radio.Button>
-                <Radio.Button
-                  className={styles.timeRadioButton}
-                  value="Moyen"
-                  onClick={() => setDuration("Moyen")}
-                >
-                  Moyen
-                </Radio.Button>
-                <Radio.Button
-                  className={styles.timeRadioButton}
-                  value="Long"
-                  onClick={() => setDuration("Long")}
-                >
-                  Long
-                </Radio.Button>
-              </Radio.Group>
-            </div>
-            <div className={styles.sectionTitle}>
-              Ingrédients
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                className={styles.addButton}
-                onClick={addIngredient}
-                size="small"
+                <Input
+                  placeholder="Ex : Gâteau au chocolat"
+                  className={styles.titleInput}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Description"
+                name="description"
+                rules={[{ required: true, message: "La description est obligatoire" }]}
               >
-                Ajouter
-              </Button>
-            </div>
-            <div className={styles.ingredientList}>
-              {ingredients.map((ingredient, idx) => (
-                <div key={idx} className={styles.ingredientItem}>
-                  <Input
-                    className={styles.ingredientInput}
-                    placeholder="Nom de l'ingrédient"
-                    value={ingredient.name}
-                    type="text"
-                    onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
-                  />
-                  <Input
-                    className={styles.ingredientInput}
-                    placeholder="Quantité (ex : 200g)"
-                    value={ingredient.quantity}
-                    type="number"
-                    onChange={(e) => handleIngredientChange(idx, "quantity", e.target.value)}
-                    rules={[{ type: "number", message: "Veuillez entrer une quantité valide" }]}
-                    inputMode="numeric"
-                    min={0}
-                  />
+                <Input.TextArea
+                  rows={3}
+                  placeholder="Décrivez brièvement la recette..."
+                  className={styles.descriptionInput}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </Form.Item>
+              <div className={styles.sectionTitle}>Photo</div>
 
-                  <Select
-                    className={styles.ingredientSelect}
-                    value={ingredient.unit}
-                    style={{ width: 100 }}
-                    onChange={(value) => handleIngredientChange(idx, "unit", value)}
-                    options={[
-                      { value: "gr", label: "gr" },
-                      { value: "cl", label: "cl" },
-                      { value: "ml", label: "ml" },
-                      { value: "càs", label: "càs" },
-                      { value: "càc", label: "càc" },
-                      { value: "", label: "unité" },
-                    ]}
-                  />
-                  <button
-                    className={styles.removeButton}
-                    onClick={() => removeIngredient(idx)}
-                    type="button"
-                    aria-label="Supprimer l'ingrédient"
+              <ImgCrop quality={1} aspect={16 / 9} cropShape="rect" zoomSlider>
+                <Upload
+                  listType="picture-card"
+                  fileList={fileList}
+                  onChange={handleChange}
+                  onPreview={handlePreview}
+                  // beforeUpload={() => false}
+                >
+                  {fileList.length >= 1 ? null : uploadButton}
+                </Upload>
+              </ImgCrop>
+
+              {previewImage && (
+                <Image
+                  wrapperStyle={{ display: "none" }}
+                  preview={{
+                    movable: true,
+                    toolbar: false,
+                    visible: previewOpen,
+                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                  }}
+                  src={previewImage}
+                />
+              )}
+
+              <div className={styles.sectionTitle}>Catégorie</div>
+              <div className={styles.timeContainer}>
+                <Radio.Group buttonStyle="solid" className={styles.timeRadio} value={category}>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Plat"
+                    onClick={() => setCategory("Plat")}
                   >
-                    <DeleteOutlined />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className={styles.sectionTitle}>
-              Étapes
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                className={styles.addButton}
-                onClick={addStep}
-                size="small"
-              >
-                Ajouter
-              </Button>
-            </div>
-            <div className={styles.stepList}>
-              {steps.map((step, idx) => (
-                <div key={idx} className={styles.stepItem}>
-                  <Input.TextArea
-                    className={styles.stepInput}
-                    placeholder={`Étape ${idx + 1}`}
-                    value={step}
-                    onChange={(e) => handleStepChange(idx, e.target.value)}
-                    autoSize={{ minRows: 1, maxRows: 3 }}
-                  />
-                  <button
-                    className={styles.removeButton}
-                    onClick={() => removeStep(idx)}
-                    type="button"
-                    aria-label="Supprimer l'étape"
+                    Plat
+                  </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Starter"
+                    onClick={() => setCategory("Starter")}
                   >
-                    <DeleteOutlined />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className={styles.actionButtons}>
-              <Button
-                className={styles.draftButton}
-                onClick={() => handleSave(true)}
-                loading={loading}
-              >
-                Sauvegarder le brouillon
-              </Button>
-              <Button
-                type="primary"
-                className={styles.saveButton}
-                onClick={() => handleSave(false)}
-                loading={loading}
-              >
-                Enregistrer la recette
-              </Button>
-            </div>
-          </Form>
-        </div>
+                    Entrée
+                  </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Desert"
+                    onClick={() => setCategory("Desert")}
+                  >
+                    Dessert
+                  </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Drink"
+                    onClick={() => setCategory("Drink")}
+                  >
+                    Boisson
+                  </Radio.Button>
+                </Radio.Group>
+              </div>
+              <div className={styles.sectionTitle}>Temps de préparation</div>
+              <div className={styles.timeContainer}>
+                <Radio.Group buttonStyle="solid" className={styles.timeRadio} value={duration}>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Rapide"
+                    onClick={() => setDuration("Rapide")}
+                  >
+                    Rapide
+                  </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Moyen"
+                    onClick={() => setDuration("Moyen")}
+                  >
+                    Moyen
+                  </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Long"
+                    onClick={() => setDuration("Long")}
+                  >
+                    Long
+                  </Radio.Button>
+                </Radio.Group>
+              </div>
+              <div className={styles.sectionTitle}>
+                Ingrédients
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  className={styles.addButton}
+                  onClick={addIngredient}
+                  size="small"
+                >
+                  Ajouter
+                </Button>
+              </div>
+              <div className={styles.ingredientList}>
+                {ingredients.map((ingredient, idx) => (
+                  <div key={idx} className={styles.ingredientItem}>
+                    <Input
+                      className={styles.ingredientInput}
+                      placeholder="Nom de l'ingrédient"
+                      value={ingredient.name}
+                      type="text"
+                      onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
+                    />
+                    <Input
+                      className={styles.ingredientInput}
+                      placeholder="Quantité (ex : 200g)"
+                      value={ingredient.quantity}
+                      type="number"
+                      onChange={(e) => handleIngredientChange(idx, "quantity", e.target.value)}
+                      rules={[{ type: "number", message: "Veuillez entrer une quantité valide" }]}
+                      inputMode="numeric"
+                      min={0}
+                    />
+
+                    <Select
+                      className={styles.ingredientSelect}
+                      value={ingredient.unit}
+                      style={{ width: 100 }}
+                      onChange={(value) => handleIngredientChange(idx, "unit", value)}
+                      options={[
+                        { value: "gr", label: "gr" },
+                        { value: "cl", label: "cl" },
+                        { value: "ml", label: "ml" },
+                        { value: "càs", label: "càs" },
+                        { value: "càc", label: "càc" },
+                        { value: "", label: "unité" },
+                      ]}
+                    />
+                    <button
+                      className={styles.removeButton}
+                      onClick={() => removeIngredient(idx)}
+                      type="button"
+                      aria-label="Supprimer l'ingrédient"
+                    >
+                      <DeleteOutlined />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.sectionTitle}>
+                Étapes
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  className={styles.addButton}
+                  onClick={addStep}
+                  size="small"
+                >
+                  Ajouter
+                </Button>
+              </div>
+              <div className={styles.stepList}>
+                {steps.map((step, idx) => (
+                  <div key={idx} className={styles.stepItem}>
+                    <Input.TextArea
+                      className={styles.stepInput}
+                      placeholder={`Étape ${idx + 1}`}
+                      value={step}
+                      onChange={(e) => handleStepChange(idx, e.target.value)}
+                      autoSize={{ minRows: 1, maxRows: 3 }}
+                    />
+                    <button
+                      className={styles.removeButton}
+                      onClick={() => removeStep(idx)}
+                      type="button"
+                      aria-label="Supprimer l'étape"
+                    >
+                      <DeleteOutlined />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.actionButtons}>
+                <Button
+                  className={styles.draftButton}
+                  onClick={() => handleSave(true)}
+                  loading={loading}
+                >
+                  Sauvegarder le brouillon
+                </Button>
+                <Button
+                  type="primary"
+                  className={styles.saveButton}
+                  onClick={() => handleSave(false)}
+                  loading={loading}
+                >
+                  Enregistrer la recette
+                </Button>
+              </div>
+            </Form>
+          </div>
+        </ConfigProvider>
       </div>
     </div>
   );

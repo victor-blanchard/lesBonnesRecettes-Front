@@ -3,7 +3,7 @@ import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setLikedRecipes } from "../reducers/users";
 import { toggleLike } from "../utils/toggleLike";
-import { Skeleton, Input, Divider, Radio, Spin } from "antd";
+import { Skeleton, Input, Divider, Radio, Spin, ConfigProvider } from "antd";
 import { SearchOutlined, ClockCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -76,23 +76,31 @@ function Home() {
           <Divider className={styles.divider} />
 
           <div className={styles.filtersTab}>
-            <Radio.Group value={categoryToDisplay} defaultValue="" buttonStyle="solid">
-              <Radio.Button onClick={() => onSearch("Starter", searchToDisplay)} value="Starter">
-                Entrées
-              </Radio.Button>
-              <Radio.Button onClick={() => onSearch("Main", searchToDisplay)} value="Main">
-                Plats
-              </Radio.Button>
-              <Radio.Button onClick={() => onSearch("Desert", searchToDisplay)} value="Desert">
-                Desserts
-              </Radio.Button>
-              <Radio.Button onClick={() => onSearch("Drink", searchToDisplay)} value="Drink">
-                Boissons
-              </Radio.Button>
-              <Radio.Button onClick={() => onSearch("", searchToDisplay)} value="">
-                Toutes
-              </Radio.Button>
-            </Radio.Group>
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorPrimary: "#333333", // couleur principale (appliquée au bouton radio actif)
+                },
+              }}
+            >
+              <Radio.Group value={categoryToDisplay} defaultValue="" buttonStyle="solid">
+                <Radio.Button onClick={() => onSearch("Starter", searchToDisplay)} value="Starter">
+                  Entrées
+                </Radio.Button>
+                <Radio.Button onClick={() => onSearch("Main", searchToDisplay)} value="Main">
+                  Plats
+                </Radio.Button>
+                <Radio.Button onClick={() => onSearch("Desert", searchToDisplay)} value="Desert">
+                  Desserts
+                </Radio.Button>
+                <Radio.Button onClick={() => onSearch("Drink", searchToDisplay)} value="Drink">
+                  Boissons
+                </Radio.Button>
+                <Radio.Button onClick={() => onSearch("", searchToDisplay)} value="">
+                  Toutes
+                </Radio.Button>
+              </Radio.Group>
+            </ConfigProvider>
           </div>
           <p className={styles.recipesNumber}>
             {isLoading ? (
