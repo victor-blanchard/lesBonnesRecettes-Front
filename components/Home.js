@@ -141,7 +141,7 @@ function Home() {
                         className={styles.card}
                         onClick={() => router.push(`/recipe/${recipe._id}`)}
                       >
-                        <img
+                        <Image
                           className={styles.cardImage}
                           alt="recipe"
                           src={
