@@ -146,7 +146,7 @@ function Home() {
                           className={styles.cardImage}
                           alt="recipe"
                           src={
-                            // recipe.picture ||
+                            recipe.picture ||
                             "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
                           }
                           width={1536}
