@@ -19,6 +19,7 @@ import { formatDate } from "../../utils/formatDate";
 import { useDispatch } from "react-redux";
 import { setLikedRecipes } from "../../reducers/users";
 import { toggleLike } from "../../utils/toggleLike";
+import Image from "next/image";
 
 function Recipe() {
   const router = useRouter();
@@ -157,13 +158,15 @@ function Recipe() {
                 <span>Brouillon</span>
               </div>
             )}
-            <img
+            <Image
               src={
                 recipe.picture ||
                 "https://res.cloudinary.com/dzo3ce7sk/image/upload/v1757608839/recipes/cdykphwryn5ktv9rwewq.jpg"
               }
               alt={recipe.name}
               className={styles.recipeImage}
+              width={1536}
+              height={864}
             />
             {recipe.isDraft !== true && (
               <>
