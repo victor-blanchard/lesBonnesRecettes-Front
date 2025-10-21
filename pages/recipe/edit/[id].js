@@ -349,7 +349,6 @@ function EditRecipe() {
                   rows={3}
                   placeholder="Décrivez brièvement la recette..."
                   className={styles.descriptionInput}
-                  value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </Form.Item>
