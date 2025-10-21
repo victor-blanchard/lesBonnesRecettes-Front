@@ -412,6 +412,13 @@ function EditRecipe() {
                   >
                     Boisson
                   </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Breakfast"
+                    onClick={() => setCategory("Breakfast")}
+                  >
+                    Petit-déj
+                  </Radio.Button>
                 </Radio.Group>
               </div>
               <div className={styles.sectionTitle}>Temps de préparation</div>
