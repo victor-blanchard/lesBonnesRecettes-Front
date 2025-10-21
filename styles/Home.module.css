@@ -75,6 +75,37 @@
   width: 100%;
 }
 
+.categoriesContainer {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.categoryButton {
+  border: none;
+  outline: none;
+  background: #eaeaea;
+  color: #333;
+  border-radius: 15px;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.4rem 1.1rem;
+  cursor: pointer;
+  /* transition: all 0.25s; */
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+.categoryButton:hover {
+  background: #e8e8e8;
+}
+
+.categoryButtonActive {
+  background: #333 !important;
+  color: #fff !important;
+}
+
 .filterButton {
   /* background-color: #ffffff; */
   border-color: #d9d9d9;
@@ -257,13 +288,6 @@
 
   .title {
     font-size: 1.8rem;
-  }
-
-  .filtersTab {
-    justify-content: center;
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-    gap: 0.5rem;
   }
 
   .filterButton {

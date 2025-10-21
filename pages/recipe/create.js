@@ -231,11 +231,7 @@ function CreateRecipe() {
                   onChange={(e) => setName(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item
-                label="Description"
-                name="description"
-                rules={[{ required: true, message: "La description est obligatoire" }]}
-              >
+              <Form.Item label="Description" name="description" rules={[{ required: false }]}>
                 <Input.TextArea
                   rows={3}
                   placeholder="Décrivez brièvement la recette..."
@@ -276,17 +272,17 @@ function CreateRecipe() {
                 <Radio.Group buttonStyle="solid" className={styles.timeRadio}>
                   <Radio.Button
                     className={styles.timeRadioButton}
-                    value="Main course"
-                    onClick={() => setCategory("Plat")}
-                  >
-                    Plat
-                  </Radio.Button>
-                  <Radio.Button
-                    className={styles.timeRadioButton}
                     value="Starter"
                     onClick={() => setCategory("Starter")}
                   >
                     Entrée
+                  </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Main course"
+                    onClick={() => setCategory("Plat")}
+                  >
+                    Plat
                   </Radio.Button>
                   <Radio.Button
                     className={styles.timeRadioButton}
@@ -301,6 +297,13 @@ function CreateRecipe() {
                     onClick={() => setCategory("Drink")}
                   >
                     Boisson
+                  </Radio.Button>
+                  <Radio.Button
+                    className={styles.timeRadioButton}
+                    value="Breakfast"
+                    onClick={() => setCategory("Breakfast")}
+                  >
+                    Petit-déj
                   </Radio.Button>
                 </Radio.Group>
               </div>
