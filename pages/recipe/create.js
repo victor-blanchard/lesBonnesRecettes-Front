@@ -109,12 +109,6 @@ function CreateRecipe() {
         return;
       }
 
-      if (!description.trim()) {
-        message.error("La description est obligatoire");
-        setLoading(false);
-        return;
-      }
-
       if (!category) {
         message.error("Veuillez sélectionner une catégorie");
         setLoading(false);

@@ -111,6 +111,7 @@
 
 .timeRadioButton {
   font-weight: 500;
+  padding-inline: 10px;
 }
 
 .ingredientSelect {

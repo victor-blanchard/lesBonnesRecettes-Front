@@ -202,12 +202,6 @@ function EditRecipe() {
         return;
       }
 
-      if (!description.trim()) {
-        message.error("La description est obligatoire");
-        setLoading(false);
-        return;
-      }
-
       if (!category) {
         message.error("Veuillez sélectionner une catégorie");
         setLoading(false);
@@ -350,11 +344,7 @@ function EditRecipe() {
                   onChange={(e) => setName(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item
-                label="Description"
-                name="description"
-                rules={[{ required: true, message: "La description est obligatoire" }]}
-              >
+              <Form.Item label="Description" name="description" rules={[{ required: false }]}>
                 <Input.TextArea
                   rows={3}
                   placeholder="Décrivez brièvement la recette..."
